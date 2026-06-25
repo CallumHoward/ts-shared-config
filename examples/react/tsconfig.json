@@ -1,0 +1,4 @@
+{
+  "extends": ["@callumhoward/config-base/tsconfig", "@callumhoward/config-react/tsconfig"],
+  "include": ["**/*.ts", "**/*.tsx"]
+}
