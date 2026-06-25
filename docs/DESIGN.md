@@ -209,6 +209,11 @@ The `examples/` spike confirmed `check-file` (base) plus `react-hooks-js` /
 `no-effect` / `testing-library` / `react` (react add-on) all resolve and run
 from a consumer that lists only the config packages as deps.
 
+**Generalizes:** the identical constraint applies to **stylelint `extends`**
+(`stylelint-config-standard`) and any other bundled package referenced *by name*
+from a shipped config. The rule is uniform — resolve bundled packages to absolute
+paths with `require.resolve`; only consumer-invoked CLIs stay bare peer deps.
+
 **Caveat:** oxlint follows the pnpm workspace symlinks and will lint into
 `node_modules`/package sources unless scoped. Configs keep `node_modules`
 ignored and consumers lint `src/**` (or explicit globs), not the whole tree.

@@ -1,0 +1,21 @@
+{
+  "name": "@example/vanilla",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint",
+    "lint:css": "stylelint \"**/*.css\"",
+    "format:check": "oxfmt --check .",
+    "check": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@callumhoward/config-base": "workspace:*"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.54.0",
+    "oxlint": "^1.69.0",
+    "stylelint": "^17.13.0",
+    "typescript": "^6.0.3"
+  }
+}
