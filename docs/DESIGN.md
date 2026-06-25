@@ -33,9 +33,10 @@ tooling for React, TanStack, Tailwind, Playwright, and GitHub Actions.
 
 - `tanstack` add-on = the full TanStack **Start** stack (router + start + nitro +
   devtools), structured so a `router-only` split is easy later.
-- The static-file trio (`pnpm-workspace.yaml`, `lefthook.yml`, GHA workflows)
-  ships as **copy-once templates** — no reusable workflows or `extends` linkage,
-  no sync CLI for now (a future CLI is the upgrade path if drift becomes a pain).
+- The non-importable static files (`pnpm-workspace.yaml`, `lefthook.yml`, GHA
+  workflows, plus `.editorconfig`, `.vscode/`, `.nvmrc`) ship as **copy-once
+  templates** — no reusable workflows or `extends` linkage, no sync CLI for now
+  (a future CLI is the upgrade path if drift becomes a pain).
 - JSDoc handling (req. 9.1): there is **no prettier** in the stack. JSDoc *tag*
   correctness is enforced by oxlint's `jsdoc` plugin (in base). We are **not**
   adding `prettier-plugin-jsdoc` unless explicitly requested.
@@ -131,9 +132,18 @@ concatenate.
   v8 coverage (text + lcov, `all`, `include: src/**`), GH-actions reporter under
   CI, `restoreMocks`. No `setupFiles`, no jsdom.
 - **lefthook** pre-commit (parallel): oxlint `--fix`, stylelint `--fix` (css),
-  oxfmt, `pnpm check` (tsgo), `pnpm fallow`.
+  oxfmt, `pnpm check` (`tsc`, TS7/Go), `pnpm fallow`.
 - **pnpm-workspace** baseline snippet: `minimumReleaseAge: 10080`,
   `trustPolicy: no-downgrade` (+ `trustPolicyExclude`). `.nvmrc` Node pin.
+- **`.editorconfig`** whose values mirror oxfmt (indent, line endings, final
+  newline, etc.), finalized against `oxfmt.config.ts` so editors and oxfmt never
+  contradict each other.
+- **`.vscode/`** recommended `settings.json` (format-on-save with oxfmt as the
+  default formatter) + `extensions.json` (oxc, stylelint). Editor-AI/LLM config
+  deferred.
+- **Type-check**: `tsc --noEmit` on **TypeScript 7** (Go). The starter's
+  experimental `tsgo` / `@typescript/native-preview` is dropped — TS7 RC makes
+  the Go compiler the standard `tsc`.
 
 ### react add-on
 - **oxlint**: + `react`, `jsx-a11y` plugins; + `react-hooks` (`react-hooks-js`),
