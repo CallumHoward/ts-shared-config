@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "lint": "oxlint",
+    "lint:css": "stylelint \"**/*.css\"",
     "format:check": "oxfmt --check .",
     "check": "tsc -p tsconfig.json",
     "test": "vitest run --passWithNoTests"
@@ -12,8 +13,10 @@
   "dependencies": {
     "@callumhoward/config-base": "workspace:*",
     "@callumhoward/config-react": "workspace:*",
+    "@callumhoward/config-tailwind": "workspace:*",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "tailwindcss": "^4.3.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
@@ -24,6 +27,7 @@
     "jsdom": "^29.1.1",
     "oxfmt": "^0.54.0",
     "oxlint": "^1.69.0",
+    "stylelint": "^17.13.0",
     "typescript": "^6.0.3",
     "vite": "^8.0.16",
     "vitest": "^4.1.8",
