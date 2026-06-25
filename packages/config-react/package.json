@@ -11,7 +11,10 @@
       "types": "./dist/vite.d.ts",
       "default": "./dist/vite.js"
     },
-    "./vitest-setup": "./dist/vitest-setup.js",
+    "./vitest-setup": {
+      "types": "./dist/vitest-setup.d.ts",
+      "default": "./dist/vitest-setup.js"
+    },
     "./tsconfig": "./tsconfig.react.json",
     "./package.json": "./package.json"
   },
@@ -33,6 +36,7 @@
     "vitest-axe": "^0.1.0"
   },
   "peerDependencies": {
+    "jsdom": "^29.1.1",
     "oxlint": "^1.69.0",
     "react": ">=19",
     "react-dom": ">=19",

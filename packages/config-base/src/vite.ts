@@ -30,7 +30,7 @@ const baseTest = {
     provider: "v8",
     reporter: ["text", "lcov"],
     include: ["src/**/*.{ts,tsx}"],
-    exclude: ["src/**/*.test.{ts,tsx}"],
+    exclude: ["src/**/*.{test,spec}.{ts,tsx}"],
   },
 } satisfies TestConfig;
 
