@@ -1,0 +1,35 @@
+{
+  "name": "@callumhoward/config-playwright",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./oxlint": {
+      "types": "./dist/oxlint.d.ts",
+      "default": "./dist/oxlint.js"
+    },
+    "./playwright": {
+      "types": "./dist/playwright.d.ts",
+      "default": "./dist/playwright.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@callumhoward/config-base": "workspace:*",
+    "eslint-plugin-playwright": "^2.10.4"
+  },
+  "peerDependencies": {
+    "@playwright/test": "^1.60.0",
+    "oxlint": "^1.69.0",
+    "typescript": ">=6"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^24.13.2",
+    "oxlint": "^1.69.0",
+    "typescript": "^6.0.3"
+  }
+}
