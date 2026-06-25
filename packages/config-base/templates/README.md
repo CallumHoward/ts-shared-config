@@ -13,5 +13,6 @@ from a package. Copy them into your repo once (re-copy to pick up updates).
 | `vscode/settings.json` | `.vscode/settings.json` |
 | `vscode/extensions.json` | `.vscode/extensions.json` |
 
-The `.vscode` settings assume the `oxc.oxc-vscode` extension; adjust the
-`source.fixAll.oxc` code-action id if your oxc extension version differs.
+The `.vscode` settings follow the Oxc extension's recommended fix/format-on-save
+setup (`oxc.oxc-vscode`): format via `source.format.oxc`, then apply lint fixes
+via `source.fixAll.oxc`.
