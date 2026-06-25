@@ -186,14 +186,32 @@ concatenate.
   `config-base` + the relevant add-ons).
 - **changesets** with fixed/locked versioning (tiers publish together).
 - Carry over the scheduled pnpm-update workflow.
+- **Authoring & build**: configs are TS source in `packages/*/src`, built with
+  `tsc` (TS7) to `dist` (`.js` + `.d.ts`); `exports` point at `dist`. Imports of
+  peer tools (oxlint/oxfmt/vite/…) are *preserved, not bundled* — they resolve in
+  the consumer at runtime. Bundled plugins are referenced via `require.resolve`.
 
-## Key technical risk
+## Validated: oxlint jsPlugins resolution (spike)
 
-**oxlint `jsPlugins` resolution under pnpm.** Plugins bundled as `dependencies`
-of an add-on package must be resolvable by oxlint when it runs from the consumer
-root. This must be validated early with a real example consumer; it may dictate
-hoisting settings or how plugin specifiers are referenced. This is the single
-riskiest part of the design.
+**Result: works.** Plugins bundled as `dependencies` of an add-on package are
+loaded by oxlint from the consumer with **no hoisting and no `.npmrc`**, by
+resolving each plugin to an absolute path inside the add-on and passing that as
+the `jsPlugins` specifier:
+
+```js
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const plugin = (name, spec) => ({ name, specifier: require.resolve(spec) });
+// jsPlugins: [plugin("check-file", "eslint-plugin-check-file"), ...]
+```
+
+The `examples/` spike confirmed `check-file` (base) plus `react-hooks-js` /
+`no-effect` / `testing-library` / `react` (react add-on) all resolve and run
+from a consumer that lists only the config packages as deps.
+
+**Caveat:** oxlint follows the pnpm workspace symlinks and will lint into
+`node_modules`/package sources unless scoped. Configs keep `node_modules`
+ignored and consumers lint `src/**` (or explicit globs), not the whole tree.
 
 ## Still to read verbatim during implementation
 
