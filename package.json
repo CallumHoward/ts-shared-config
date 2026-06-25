@@ -3,5 +3,20 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.9.0"
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "build": "pnpm -r --filter \"./packages/*\" run build",
+    "check": "pnpm -r --filter \"./examples/*\" run check",
+    "lint": "pnpm -r --filter \"./examples/*\" run lint",
+    "lint:css": "pnpm -r --filter \"./examples/*\" run lint:css",
+    "format:check": "pnpm -r --filter \"./examples/*\" run format:check",
+    "test": "pnpm -r --filter \"./examples/*\" run test",
+    "validate": "pnpm build && pnpm check && pnpm lint && pnpm lint:css && pnpm format:check && pnpm test",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.0"
+  }
 }
