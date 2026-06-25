@@ -23,7 +23,7 @@ tooling for React, TanStack, Tailwind, Playwright, and GitHub Actions.
 | # | Decision | Choice |
 |---|---|---|
 | 1 | Package layout | **Monorepo** of per-tier packages, each with per-tool subpath exports |
-| 2 | Sharing the non-importable files (`pnpm-workspace.yaml`, `lefthook.yml`, GHA) | **Native tool mechanisms now** (`extends`/`uses:`/documented snippet); a `sync` CLI is a possible later upgrade |
+| 2 | Sharing the non-importable files (`pnpm-workspace.yaml`, `lefthook.yml`, GHA) | **Static templates the consumer copies once** — no `extends`/reusable-workflow indirection and no sync CLI for now; consumers re-copy on upgrade (a CLI remains the future option if drift bites) |
 | 3 | DOM/browser testing line | **Node** vitest env in base; `jsdom` + testing-library + jest-dom + vitest-axe live in the **React** add-on |
 | 4 | Term for non-base pieces | **add-on** |
 | 5 | Scope / naming | `@callumhoward/config-*` |
@@ -33,8 +33,9 @@ tooling for React, TanStack, Tailwind, Playwright, and GitHub Actions.
 
 - `tanstack` add-on = the full TanStack **Start** stack (router + start + nitro +
   devtools), structured so a `router-only` split is easy later.
-- pnpm-workspace baseline ships as a **documented snippet** for now (the future
-  CLI is how we'd keep it in sync).
+- The static-file trio (`pnpm-workspace.yaml`, `lefthook.yml`, GHA workflows)
+  ships as **copy-once templates** — no reusable workflows or `extends` linkage,
+  no sync CLI for now (a future CLI is the upgrade path if drift becomes a pain).
 - JSDoc handling (req. 9.1): there is **no prettier** in the stack. JSDoc *tag*
   correctness is enforced by oxlint's `jsdoc` plugin (in base). We are **not**
   adding `prettier-plugin-jsdoc` unless explicitly requested.
@@ -58,7 +59,7 @@ packages/
 | `config-tanstack` | `/oxlint` `/vite` | @tanstack/eslint-plugin-router, @tanstack/devtools-vite | @tanstack/react-router, @tanstack/react-start, @tanstack/router-plugin, nitro |
 | `config-tailwind` | `/vite` `/stylelint` | @tailwindcss/vite | tailwindcss |
 | `config-playwright` | `/playwright` `/oxlint` | eslint-plugin-playwright | @playwright/test |
-| `config-gha` | reusable workflows (`ci.yml`, `update-pnpm.yml`) | — | — |
+| `config-gha` | template workflows to copy (`ci.yml`, `update-pnpm.yml`) | — | — |
 
 > Exact dep/peer classification is finalized per-file during implementation
 > (rule of thumb: if a *shipped config/setup file imports it*, it's a `dependency`;
@@ -94,17 +95,14 @@ import tailwind from "@callumhoward/config-tailwind/vite";
 export default defineViteConfig({ addons: [react, tanstack, tailwind] });
 ```
 
-```yaml
-# lefthook.yml
-extends:
-  - node_modules/@callumhoward/config-base/lefthook.yml
-```
+`lefthook.yml`, `pnpm-workspace.yaml`, and `.github/workflows/*.yml` are **not**
+linked at runtime — they are copied once from the package templates into the
+consumer repo (re-copy to pick up upstream changes):
 
-```yaml
-# .github/workflows/ci.yml
-jobs:
-  ci:
-    uses: callumhoward/ts-shared-config/.github/workflows/ci.yml@v1
+```sh
+cp node_modules/@callumhoward/config-base/templates/lefthook.yml .
+cp node_modules/@callumhoward/config-base/templates/pnpm-workspace.yaml .
+cp node_modules/@callumhoward/config-gha/templates/ci.yml .github/workflows/
 ```
 
 **Merge semantics for the JS `define*` helpers:** `plugins`/`jsPlugins`
@@ -167,9 +165,10 @@ concatenate.
   rules) + the `e2e` spec-naming `check-file` rule.
 
 ### gha add-on
-- Reusable `ci.yml` (install → `lint:ci` → `lint:css` → `check` → `test:cov` +
-  diff-coverage gate) and scheduled `update-pnpm.yml`. Add-ons contribute extra
-  steps (Playwright → install browsers + `test:e2e`).
+- Template `ci.yml` (install → `lint:ci` → `lint:css` → `check` → `test:cov` +
+  diff-coverage gate) and scheduled `update-pnpm.yml`, copied into the consumer's
+  `.github/workflows/`. Add-on-specific steps (e.g. Playwright → install browsers
+  + `test:e2e`) are baked into the relevant template variant.
 
 ## Repo + release
 
@@ -200,7 +199,7 @@ riskiest part of the design.
 3. **config-tanstack**.
 4. **config-tailwind**.
 5. **config-playwright**.
-6. **config-gha** (reusable workflows).
+6. **config-gha** (template workflows to copy).
 7. **Validation + docs**: example consumer(s) proving cross-package composition
    (esp. the oxlint jsPlugins risk); per-package + root READMEs; pnpm-workspace
    snippet; publish dry-run.
