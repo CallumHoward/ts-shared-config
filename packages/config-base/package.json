@@ -15,6 +15,10 @@
       "types": "./dist/stylelint.d.ts",
       "default": "./dist/stylelint.js"
     },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "default": "./dist/vite.js"
+    },
     "./tsconfig": "./tsconfig.base.json",
     "./package.json": "./package.json"
   },
@@ -30,13 +34,17 @@
     "oxfmt": "^0.54.0",
     "oxlint": "^1.69.0",
     "stylelint": "^17.13.0",
-    "typescript": ">=6"
+    "typescript": ">=6",
+    "vite": "^8.0.0",
+    "vitest": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "^24.13.2",
     "oxfmt": "^0.54.0",
     "oxlint": "^1.69.0",
     "stylelint": "^17.13.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16",
+    "vitest": "^4.1.8"
   }
 }
