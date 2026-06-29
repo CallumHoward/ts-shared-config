@@ -8,12 +8,12 @@
     "lint:css": "stylelint \"**/*.css\"",
     "format:check": "oxfmt --check .",
     "check": "tsc -p tsconfig.json",
-    "test": "vitest run --passWithNoTests"
-  },
-  "dependencies": {
-    "@callumhoward/config-base": "workspace:*"
+    "test": "vitest run --passWithNoTests",
+    "fallow": "fallow"
   },
   "devDependencies": {
+    "@callumhoward/config-base": "workspace:*",
+    "fallow": "^2.89.0",
     "oxfmt": "^0.54.0",
     "oxlint": "^1.69.0",
     "stylelint": "^17.13.0",

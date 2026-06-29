@@ -20,9 +20,10 @@
       "default": "./dist/vite.js"
     },
     "./tsconfig": "./tsconfig.base.json",
+    "./fallow": "./fallow.json",
     "./package.json": "./package.json"
   },
-  "files": ["dist", "tsconfig.base.json", "templates"],
+  "files": ["dist", "tsconfig.base.json", "fallow.json", "lefthook.yml", "templates"],
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
@@ -31,6 +32,8 @@
     "stylelint-config-standard": "^40.0.0"
   },
   "peerDependencies": {
+    "fallow": "^2.89.0",
+    "lefthook": "^2.1.9",
     "oxfmt": "^0.54.0",
     "oxlint": "^1.69.0",
     "stylelint": "^17.13.0",

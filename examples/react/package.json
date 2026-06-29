@@ -8,29 +8,30 @@
     "lint:css": "stylelint \"**/*.css\"",
     "format:check": "oxfmt --check .",
     "check": "tsc -p tsconfig.json",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "fallow": "fallow"
   },
   "dependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
     "@callumhoward/config-base": "workspace:*",
     "@callumhoward/config-react": "workspace:*",
     "@callumhoward/config-tailwind": "workspace:*",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "tailwindcss": "^4.3.1"
-  },
-  "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "fallow": "^2.89.0",
     "jsdom": "^29.1.1",
     "oxfmt": "^0.54.0",
     "oxlint": "^1.69.0",
     "stylelint": "^17.13.0",
+    "tailwindcss": "^4.3.1",
     "typescript": "^6.0.3",
     "vite": "^8.0.16",
-    "vitest": "^4.1.8",
-    "vitest-axe": "^0.1.0"
+    "vitest": "^4.1.8"
   }
 }

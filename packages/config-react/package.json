@@ -16,9 +16,10 @@
       "default": "./dist/vitest-setup.js"
     },
     "./tsconfig": "./tsconfig.react.json",
+    "./fallow": "./fallow.json",
     "./package.json": "./package.json"
   },
-  "files": ["dist", "tsconfig.react.json"],
+  "files": ["dist", "tsconfig.react.json", "fallow.json"],
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
