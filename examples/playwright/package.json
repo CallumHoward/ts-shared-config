@@ -8,11 +8,9 @@
     "format:check": "oxfmt --check .",
     "check": "tsc -p tsconfig.json"
   },
-  "dependencies": {
-    "@callumhoward/config-base": "workspace:*",
-    "@callumhoward/config-playwright": "workspace:*"
-  },
   "devDependencies": {
+    "@callumhoward/config-base": "workspace:*",
+    "@callumhoward/config-playwright": "workspace:*",
     "@playwright/test": "^1.60.0",
     "oxfmt": "^0.54.0",
     "oxlint": "^1.69.0",

@@ -14,12 +14,12 @@ LLM-ready.
 
 | Package | Provides |
 | --- | --- |
-| **`@callumhoward/config-base`** | oxlint, oxfmt, stylelint, `tsconfig`, vite/vitest (node), + copy-once templates (lefthook, pnpm-workspace, `.editorconfig`, `.nvmrc`, fallow, `.vscode`) |
+| **`@callumhoward/config-base`** | oxlint, oxfmt, stylelint, `tsconfig`, vite/vitest (node); live-inherited `lefthook` + `fallow`; `pnpm-workspace` policy schema; copy-once editor templates (`.editorconfig`, `.vscode`, `.nvmrc`) |
 | `@callumhoward/config-react` | oxlint (react + hooks + a11y + RTL), vite (React plugins **+ React Compiler**), jsdom vitest + setup, `tsconfig` layer |
 | `@callumhoward/config-tanstack` | oxlint router rules + `src/routes` override, TanStack Start vite plugins (assumes react) |
 | `@callumhoward/config-tailwind` | `@tailwindcss/vite`, stylelint at-rules, oxfmt class sorting |
 | `@callumhoward/config-playwright` | `definePlaywright` config + e2e oxlint override |
-| `@callumhoward/config-gha` | copy-once CI + scheduled pnpm-update workflow templates |
+| `@callumhoward/config-gha` | reusable CI workflow + thin caller template; scheduled pnpm-update template |
 
 ## Base usage
 
@@ -77,13 +77,29 @@ React Compiler is on by default; opt out with `reactVite({ reactCompiler: false 
 See [`examples/`](./examples) for working consumers of each tier (`vanilla`,
 `react`, `tanstack`, `playwright`).
 
-## Copy-once templates
+## Inheriting the non-TS config
 
-Files that pnpm, lefthook, editors, and CI read but cannot `import`/`extends`
-(no sync CLI yet) ship under each package's `templates/`. Copy them into your
-repo once, re-copy to pick up updates. See `templates/README.md` in
-[`config-base`](./packages/config-base/templates) and
-[`config-gha`](./packages/config-gha/templates).
+`lefthook` and `fallow` are inherited **live** via their own `extends` (a path
+into `node_modules`), so updates flow with the package version:
+
+```yaml
+# lefthook.yml
+extends: [node_modules/@callumhoward/config-base/lefthook.yml]
+```
+```jsonc
+// .fallowrc.json
+{ "extends": ["./node_modules/@callumhoward/config-base/fallow.json"] }
+```
+
+CI is a **reusable workflow**: your `.github/workflows/ci.yml` calls
+`callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml@v1` (see
+[`config-gha`](./packages/config-gha)). It includes a CI-only check that your
+`pnpm-workspace.yaml` meets the supply-chain policy
+(`@callumhoward/config-base/schema/pnpm-workspace.json`).
+
+The only true **copy-once** files (no inheritance mechanism) are
+`pnpm-workspace.yaml`, `.editorconfig`, `.vscode/*`, and `.nvmrc` — copy them
+from [`config-base/templates`](./packages/config-base/templates).
 
 ## How it works
 

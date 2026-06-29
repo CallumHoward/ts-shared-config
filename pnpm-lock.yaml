@@ -13,14 +13,13 @@ importers:
         version: 2.31.0(@types/node@24.13.2)
 
   examples/playwright:
-    dependencies:
+    devDependencies:
       '@callumhoward/config-base':
         specifier: workspace:*
         version: link:../../packages/config-base
       '@callumhoward/config-playwright':
         specifier: workspace:*
         version: link:../../packages/config-playwright
-    devDependencies:
       '@playwright/test':
         specifier: ^1.60.0
         version: 1.61.1
@@ -97,15 +96,6 @@ importers:
 
   examples/tanstack:
     dependencies:
-      '@callumhoward/config-base':
-        specifier: workspace:*
-        version: link:../../packages/config-base
-      '@callumhoward/config-react':
-        specifier: workspace:*
-        version: link:../../packages/config-react
-      '@callumhoward/config-tanstack':
-        specifier: workspace:*
-        version: link:../../packages/config-tanstack
       '@tanstack/react-router':
         specifier: ^1.170.16
         version: 1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -116,6 +106,15 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
     devDependencies:
+      '@callumhoward/config-base':
+        specifier: workspace:*
+        version: link:../../packages/config-base
+      '@callumhoward/config-react':
+        specifier: workspace:*
+        version: link:../../packages/config-react
+      '@callumhoward/config-tanstack':
+        specifier: workspace:*
+        version: link:../../packages/config-tanstack
       '@types/react':
         specifier: ^19.2.17
         version: 19.2.17

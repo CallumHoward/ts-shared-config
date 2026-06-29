@@ -84,16 +84,24 @@ additionally make hand-editing require a fork. They don't remove the need for a
 sync step, so they're set aside (the "scaffold a repo from a template" model is
 the only place they'd fit).
 
-### Follow-ups (not in the current PR)
+### Implemented
 
-- Convert **`lefthook`, GHA workflows, and `fallow`** from copy-once templates →
-  **live extension** (lefthook `extends` into `node_modules`; GHA reusable
-  workflows; `.fallowrc.json` `extends: ["@callumhoward/config-base/fallow", …]`).
-  The packages currently ship these under `templates/`.
-- Add a **`pnpm-workspace.yaml` policy JSON Schema** shipped by `config-base` +
-  a validation step wired into the lefthook + CI templates.
-- Decide whether to drop `.nvmrc` from the managed set (a one-time consumer
-  choice).
+- **`lefthook`, GHA, and `fallow` are now live** (not copy-once):
+  - lefthook ships `config-base/lefthook.yml`; consumers
+    `extends: [node_modules/@callumhoward/config-base/lefthook.yml]` (verified
+    standalone — jobs append, not replace).
+  - fallow ships `config-base/fallow.json` (+ react/tailwind `fallow.json` for
+    deps it can't see used: jsdom, tailwindcss); consumers `extends` the
+    `node_modules`-relative file path (fallow resolves paths, not package specs).
+  - GHA: a reusable workflow (`.github/workflows/ci-reusable.yml`, tier inputs);
+    `config-gha`'s `ci.yml` is a thin caller — CI logic updates via the `@ref`.
+- **pnpm-workspace policy**: `config-base` ships `schema/pnpm-workspace.json`
+  (`minimumReleaseAge ≥ 10080`, `trustPolicy: no-downgrade`); the reusable CI
+  validates it with `check-jsonschema` — **CI-only** (oxlint can't lint YAML, so
+  a lint rule doesn't fall out; no pre-commit hook).
+- `lefthook`/`fallow` are config-base **peerDependencies** (pnpm auto-installs
+  peers); this repo sets `allowBuilds.lefthook: false` since it runs no hooks.
+- `.nvmrc`, `.editorconfig`, `.vscode/*` stay copy-once templates.
 
 ## Packages
 
@@ -150,14 +158,20 @@ import tailwind from "@callumhoward/config-tailwind/vite";
 export default defineViteConfig({ addons: [react, tanstack, tailwind] });
 ```
 
-`lefthook.yml`, `pnpm-workspace.yaml`, and `.github/workflows/*.yml` are **not**
-linked at runtime — they are copied once from the package templates into the
-consumer repo (re-copy to pick up upstream changes):
+`lefthook` and `fallow` are inherited live via their own `extends` (file paths
+into `node_modules`); CI is a reusable workflow the consumer's `ci.yml` calls.
+Only `pnpm-workspace.yaml`, `.editorconfig`, `.vscode/*`, and `.nvmrc` stay
+copy-once templates — and `pnpm-workspace.yaml`'s policy keys are enforced by a
+CI schema check rather than synced (see "Static config: inheritance over
+versioning").
 
-```sh
-cp node_modules/@callumhoward/config-base/templates/lefthook.yml .
-cp node_modules/@callumhoward/config-base/templates/pnpm-workspace.yaml .
-cp node_modules/@callumhoward/config-gha/templates/ci.yml .github/workflows/
+```yaml
+# lefthook.yml
+extends: [node_modules/@callumhoward/config-base/lefthook.yml]
+```
+```jsonc
+// .fallowrc.json
+{ "extends": ["./node_modules/@callumhoward/config-base/fallow.json"] }
 ```
 
 **Merge semantics for the JS `define*` helpers:** `plugins`/`jsPlugins`
