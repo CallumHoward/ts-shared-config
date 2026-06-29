@@ -23,7 +23,7 @@ tooling for React, TanStack, Tailwind, Playwright, and GitHub Actions.
 | # | Decision | Choice |
 |---|---|---|
 | 1 | Package layout | **Monorepo** of per-tier packages, each with per-tool subpath exports |
-| 2 | Sharing the non-importable files (`pnpm-workspace.yaml`, `lefthook.yml`, GHA) | **Native tool mechanisms now** (`extends`/`uses:`/documented snippet); a `sync` CLI is a possible later upgrade |
+| 2 | Sharing the non-importable files (`pnpm-workspace.yaml`, `lefthook.yml`, GHA) | **Static templates the consumer copies once** — _**⚠️ superseded; see "Static config: inheritance over versioning" below.**_ |
 | 3 | DOM/browser testing line | **Node** vitest env in base; `jsdom` + testing-library + jest-dom + vitest-axe live in the **React** add-on |
 | 4 | Term for non-base pieces | **add-on** |
 | 5 | Scope / naming | `@callumhoward/config-*` |
@@ -33,11 +33,75 @@ tooling for React, TanStack, Tailwind, Playwright, and GitHub Actions.
 
 - `tanstack` add-on = the full TanStack **Start** stack (router + start + nitro +
   devtools), structured so a `router-only` split is easy later.
-- pnpm-workspace baseline ships as a **documented snippet** for now (the future
-  CLI is how we'd keep it in sync).
+- The non-importable static files (`pnpm-workspace.yaml`, `lefthook.yml`, GHA
+  workflows, plus `.editorconfig`, `.vscode/`, `.nvmrc`) ship as **copy-once
+  templates** — no reusable workflows or `extends` linkage, no sync CLI for now
+  (a future CLI is the upgrade path if drift becomes a pain).
 - JSDoc handling (req. 9.1): there is **no prettier** in the stack. JSDoc *tag*
   correctness is enforced by oxlint's `jsdoc` plugin (in base). We are **not**
   adding `prettier-plugin-jsdoc` unless explicitly requested.
+
+## Static config: inheritance over versioning (resolved)
+
+_Supersedes decision 2._ Two requirements drove a rethink of how non-importable
+files are shared: consumers must be able to (1) **extend/override** the base and
+(2) **rebase** their setup onto upstream updates.
+
+A true rebase of hand-edited files needs a recorded common ancestor (a 3-way
+merge), which means a sync manifest + a CLI. But almost every file we'd manage
+has a **native inheritance mechanism**, which makes updates automatic and
+overrides trivial. Once those go live, the only non-inheritable file with
+genuinely *evolving* policy is `pnpm-workspace.yaml` — and that file is
+inherently part upstream-policy / part consumer-content, so **a check that
+asserts the policy keys** fits its nature far better than owning/merging the
+whole file. Net: **lean on native inheritance, and replace the static-file
+"versioning" problem with a policy check** — no sync CLI, no manifest, no 3-way
+merge, no subtree/submodule.
+
+**Classification**
+
+- **Live / inherited** (auto-updates via version bump; override by composing):
+  tsconfig (`extends`), oxlint/oxfmt/stylelint/vite (`define*` composers),
+  **lefthook** (`extends`/`remotes`), **GitHub Actions** (reusable workflows +
+  `workflow_call` inputs), **fallow** (`extends` — its schema supports it).
+- **Policy-checked** (consumer authors the file; `config-base` ships a JSON
+  Schema; a check enforces the policy keys): `pnpm-workspace.yaml` —
+  `minimumReleaseAge` (`minimum`), `trustPolicy` (`const`/`enum`), `required`.
+  This is the JSON/YAML schema-check effort from the principles, now also closing
+  the static-file gap; run in lefthook pre-commit + CI. Policy updates propagate
+  by the shipped schema bumping → the consumer's check failing with a clear
+  message → a one-line fix (explicit and reviewable, unlike a silent merge).
+- **Copy-once-and-forget** (stable, low-stakes, drift harmless): `.editorconfig`
+  (mirrors oxfmt's stable defaults), `.vscode/*`, `.nvmrc`. Optionally a
+  feather-light check; no sync.
+- **Dropped**: sync CLI, sync manifest, 3-way merge (`git merge-file`/diff3),
+  patch-replay, subtree/submodule.
+
+**Why not subtree/submodule** (considered — git's own 3-way merge is appealing):
+our canonical paths are scattered across three roots (`/`, `/.vscode`,
+`/.github/workflows`), which a single-prefix vendored tree can't map; submodules
+additionally make hand-editing require a fork. They don't remove the need for a
+sync step, so they're set aside (the "scaffold a repo from a template" model is
+the only place they'd fit).
+
+### Implemented
+
+- **`lefthook`, GHA, and `fallow` are now live** (not copy-once):
+  - lefthook ships `config-base/lefthook.yml`; consumers
+    `extends: [node_modules/@callumhoward/config-base/lefthook.yml]` (verified
+    standalone — jobs append, not replace).
+  - fallow ships `config-base/fallow.json` (+ react/tailwind `fallow.json` for
+    deps it can't see used: jsdom, tailwindcss); consumers `extends` the
+    `node_modules`-relative file path (fallow resolves paths, not package specs).
+  - GHA: a reusable workflow (`.github/workflows/ci-reusable.yml`, tier inputs);
+    `config-gha`'s `ci.yml` is a thin caller — CI logic updates via the `@ref`.
+- **pnpm-workspace policy**: `config-base` ships `schema/pnpm-workspace.json`
+  (`minimumReleaseAge ≥ 10080`, `trustPolicy: no-downgrade`); the reusable CI
+  validates it with `check-jsonschema` — **CI-only** (oxlint can't lint YAML, so
+  a lint rule doesn't fall out; no pre-commit hook).
+- `lefthook`/`fallow` are config-base **peerDependencies** (pnpm auto-installs
+  peers); this repo sets `allowBuilds.lefthook: false` since it runs no hooks.
+- `.nvmrc`, `.editorconfig`, `.vscode/*` stay copy-once templates.
 
 ## Packages
 
@@ -58,7 +122,7 @@ packages/
 | `config-tanstack` | `/oxlint` `/vite` | @tanstack/eslint-plugin-router, @tanstack/devtools-vite | @tanstack/react-router, @tanstack/react-start, @tanstack/router-plugin, nitro |
 | `config-tailwind` | `/vite` `/stylelint` | @tailwindcss/vite | tailwindcss |
 | `config-playwright` | `/playwright` `/oxlint` | eslint-plugin-playwright | @playwright/test |
-| `config-gha` | reusable workflows (`ci.yml`, `update-pnpm.yml`) | — | — |
+| `config-gha` | template workflows to copy (`ci.yml`, `update-pnpm.yml`) | — | — |
 
 > Exact dep/peer classification is finalized per-file during implementation
 > (rule of thumb: if a *shipped config/setup file imports it*, it's a `dependency`;
@@ -94,17 +158,20 @@ import tailwind from "@callumhoward/config-tailwind/vite";
 export default defineViteConfig({ addons: [react, tanstack, tailwind] });
 ```
 
-```yaml
-# lefthook.yml
-extends:
-  - node_modules/@callumhoward/config-base/lefthook.yml
-```
+`lefthook` and `fallow` are inherited live via their own `extends` (file paths
+into `node_modules`); CI is a reusable workflow the consumer's `ci.yml` calls.
+Only `pnpm-workspace.yaml`, `.editorconfig`, `.vscode/*`, and `.nvmrc` stay
+copy-once templates — and `pnpm-workspace.yaml`'s policy keys are enforced by a
+CI schema check rather than synced (see "Static config: inheritance over
+versioning").
 
 ```yaml
-# .github/workflows/ci.yml
-jobs:
-  ci:
-    uses: callumhoward/ts-shared-config/.github/workflows/ci.yml@v1
+# lefthook.yml
+extends: [node_modules/@callumhoward/config-base/lefthook.yml]
+```
+```jsonc
+// .fallowrc.json
+{ "extends": ["./node_modules/@callumhoward/config-base/fallow.json"] }
 ```
 
 **Merge semantics for the JS `define*` helpers:** `plugins`/`jsPlugins`
@@ -133,9 +200,18 @@ concatenate.
   v8 coverage (text + lcov, `all`, `include: src/**`), GH-actions reporter under
   CI, `restoreMocks`. No `setupFiles`, no jsdom.
 - **lefthook** pre-commit (parallel): oxlint `--fix`, stylelint `--fix` (css),
-  oxfmt, `pnpm check` (tsgo), `pnpm fallow`.
+  oxfmt, `pnpm check` (`tsc`, TS7/Go), `pnpm fallow`.
 - **pnpm-workspace** baseline snippet: `minimumReleaseAge: 10080`,
   `trustPolicy: no-downgrade` (+ `trustPolicyExclude`). `.nvmrc` Node pin.
+- **`.editorconfig`** — oxfmt **reads** it (indent width, tabs-vs-spaces,
+  end-of-line, …), so it's the single whitespace source of truth; editors and
+  oxfmt can't contradict each other.
+- **`.vscode/`** recommended `settings.json` (format-on-save with oxfmt as the
+  default formatter) + `extensions.json` (oxc, stylelint). Editor-AI/LLM config
+  deferred.
+- **Type-check**: `tsc --noEmit` on **TypeScript 7** (Go). The starter's
+  experimental `tsgo` / `@typescript/native-preview` is dropped — TS7 RC makes
+  the Go compiler the standard `tsc`.
 
 ### react add-on
 - **oxlint**: + `react`, `jsx-a11y` plugins; + `react-hooks` (`react-hooks-js`),
@@ -167,9 +243,10 @@ concatenate.
   rules) + the `e2e` spec-naming `check-file` rule.
 
 ### gha add-on
-- Reusable `ci.yml` (install → `lint:ci` → `lint:css` → `check` → `test:cov` +
-  diff-coverage gate) and scheduled `update-pnpm.yml`. Add-ons contribute extra
-  steps (Playwright → install browsers + `test:e2e`).
+- Template `ci.yml` (install → `lint:ci` → `lint:css` → `check` → `test:cov` +
+  diff-coverage gate) and scheduled `update-pnpm.yml`, copied into the consumer's
+  `.github/workflows/`. Add-on-specific steps (e.g. Playwright → install browsers
+  + `test:e2e`) are baked into the relevant template variant.
 
 ## Repo + release
 
@@ -177,14 +254,37 @@ concatenate.
   `config-base` + the relevant add-ons).
 - **changesets** with fixed/locked versioning (tiers publish together).
 - Carry over the scheduled pnpm-update workflow.
+- **Authoring & build**: configs are TS source in `packages/*/src`, built with
+  `tsc` (TS7) to `dist` (`.js` + `.d.ts`); `exports` point at `dist`. Imports of
+  peer tools (oxlint/oxfmt/vite/…) are *preserved, not bundled* — they resolve in
+  the consumer at runtime. Bundled plugins are referenced via `require.resolve`.
 
-## Key technical risk
+## Validated: oxlint jsPlugins resolution (spike)
 
-**oxlint `jsPlugins` resolution under pnpm.** Plugins bundled as `dependencies`
-of an add-on package must be resolvable by oxlint when it runs from the consumer
-root. This must be validated early with a real example consumer; it may dictate
-hoisting settings or how plugin specifiers are referenced. This is the single
-riskiest part of the design.
+**Result: works.** Plugins bundled as `dependencies` of an add-on package are
+loaded by oxlint from the consumer with **no hoisting and no `.npmrc`**, by
+resolving each plugin to an absolute path inside the add-on and passing that as
+the `jsPlugins` specifier:
+
+```js
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const plugin = (name, spec) => ({ name, specifier: require.resolve(spec) });
+// jsPlugins: [plugin("check-file", "eslint-plugin-check-file"), ...]
+```
+
+The `examples/` spike confirmed `check-file` (base) plus `react-hooks-js` /
+`no-effect` / `testing-library` / `react` (react add-on) all resolve and run
+from a consumer that lists only the config packages as deps.
+
+**Generalizes:** the identical constraint applies to **stylelint `extends`**
+(`stylelint-config-standard`) and any other bundled package referenced *by name*
+from a shipped config. The rule is uniform — resolve bundled packages to absolute
+paths with `require.resolve`; only consumer-invoked CLIs stay bare peer deps.
+
+**Caveat:** oxlint follows the pnpm workspace symlinks and will lint into
+`node_modules`/package sources unless scoped. Configs keep `node_modules`
+ignored and consumers lint `src/**` (or explicit globs), not the whole tree.
 
 ## Still to read verbatim during implementation
 
@@ -200,7 +300,7 @@ riskiest part of the design.
 3. **config-tanstack**.
 4. **config-tailwind**.
 5. **config-playwright**.
-6. **config-gha** (reusable workflows).
+6. **config-gha** (template workflows to copy).
 7. **Validation + docs**: example consumer(s) proving cross-package composition
    (esp. the oxlint jsPlugins risk); per-package + root READMEs; pnpm-workspace
    snippet; publish dry-run.

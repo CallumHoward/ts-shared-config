@@ -1,0 +1,24 @@
+{
+  "name": "@example/vanilla",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint",
+    "lint:css": "stylelint \"**/*.css\"",
+    "format:check": "oxfmt --check .",
+    "check": "tsc -p tsconfig.json",
+    "test": "vitest run --passWithNoTests",
+    "fallow": "fallow"
+  },
+  "devDependencies": {
+    "@callumhoward/config-base": "workspace:*",
+    "fallow": "^2.89.0",
+    "oxfmt": "^0.54.0",
+    "oxlint": "^1.69.0",
+    "stylelint": "^17.13.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16",
+    "vitest": "^4.1.8"
+  }
+}

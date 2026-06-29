@@ -1,0 +1,19 @@
+# CI caller from @callumhoward/config-gha. Copy to .github/workflows/ci.yml.
+#
+# It calls the shared reusable workflow, so updates flow by bumping the @ref —
+# no need to re-copy. Pin to a release tag (e.g. @v1) for stability; @main
+# tracks the latest. Toggle the tier inputs for the add-ons you use.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    uses: callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml@main
+    with:
+      run-css: true # config-base ships stylelint
+      run-build: false # set true for app tiers (config-react / config-tanstack)
+      run-e2e: false # set true with config-playwright

@@ -1,0 +1,43 @@
+{
+  "name": "@callumhoward/config-tailwind",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "default": "./dist/vite.js"
+    },
+    "./stylelint": {
+      "types": "./dist/stylelint.d.ts",
+      "default": "./dist/stylelint.js"
+    },
+    "./oxfmt": {
+      "types": "./dist/oxfmt.d.ts",
+      "default": "./dist/oxfmt.js"
+    },
+    "./fallow": "./fallow.json",
+    "./package.json": "./package.json"
+  },
+  "files": ["dist", "fallow.json"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@callumhoward/config-base": "workspace:*",
+    "@tailwindcss/vite": "^4.3.1"
+  },
+  "peerDependencies": {
+    "oxfmt": "^0.54.0",
+    "stylelint": "^17.13.0",
+    "tailwindcss": "^4.3.1",
+    "vite": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.2",
+    "oxfmt": "^0.54.0",
+    "stylelint": "^17.13.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16",
+    "vitest": "^4.1.8"
+  }
+}
