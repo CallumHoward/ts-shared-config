@@ -23,7 +23,7 @@ tooling for React, TanStack, Tailwind, Playwright, and GitHub Actions.
 | # | Decision | Choice |
 |---|---|---|
 | 1 | Package layout | **Monorepo** of per-tier packages, each with per-tool subpath exports |
-| 2 | Sharing the non-importable files (`pnpm-workspace.yaml`, `lefthook.yml`, GHA) | **Static templates the consumer copies once** — no `extends`/reusable-workflow indirection and no sync CLI for now; consumers re-copy on upgrade (a CLI remains the future option if drift bites) |
+| 2 | Sharing the non-importable files (`pnpm-workspace.yaml`, `lefthook.yml`, GHA) | **Static templates the consumer copies once** — _**⚠️ superseded; see "Static config: inheritance over versioning" below.**_ |
 | 3 | DOM/browser testing line | **Node** vitest env in base; `jsdom` + testing-library + jest-dom + vitest-axe live in the **React** add-on |
 | 4 | Term for non-base pieces | **add-on** |
 | 5 | Scope / naming | `@callumhoward/config-*` |
@@ -40,6 +40,60 @@ tooling for React, TanStack, Tailwind, Playwright, and GitHub Actions.
 - JSDoc handling (req. 9.1): there is **no prettier** in the stack. JSDoc *tag*
   correctness is enforced by oxlint's `jsdoc` plugin (in base). We are **not**
   adding `prettier-plugin-jsdoc` unless explicitly requested.
+
+## Static config: inheritance over versioning (resolved)
+
+_Supersedes decision 2._ Two requirements drove a rethink of how non-importable
+files are shared: consumers must be able to (1) **extend/override** the base and
+(2) **rebase** their setup onto upstream updates.
+
+A true rebase of hand-edited files needs a recorded common ancestor (a 3-way
+merge), which means a sync manifest + a CLI. But almost every file we'd manage
+has a **native inheritance mechanism**, which makes updates automatic and
+overrides trivial. Once those go live, the only non-inheritable file with
+genuinely *evolving* policy is `pnpm-workspace.yaml` — and that file is
+inherently part upstream-policy / part consumer-content, so **a check that
+asserts the policy keys** fits its nature far better than owning/merging the
+whole file. Net: **lean on native inheritance, and replace the static-file
+"versioning" problem with a policy check** — no sync CLI, no manifest, no 3-way
+merge, no subtree/submodule.
+
+**Classification**
+
+- **Live / inherited** (auto-updates via version bump; override by composing):
+  tsconfig (`extends`), oxlint/oxfmt/stylelint/vite (`define*` composers),
+  **lefthook** (`extends`/`remotes`), **GitHub Actions** (reusable workflows +
+  `workflow_call` inputs), **fallow** (`extends` — its schema supports it).
+- **Policy-checked** (consumer authors the file; `config-base` ships a JSON
+  Schema; a check enforces the policy keys): `pnpm-workspace.yaml` —
+  `minimumReleaseAge` (`minimum`), `trustPolicy` (`const`/`enum`), `required`.
+  This is the JSON/YAML schema-check effort from the principles, now also closing
+  the static-file gap; run in lefthook pre-commit + CI. Policy updates propagate
+  by the shipped schema bumping → the consumer's check failing with a clear
+  message → a one-line fix (explicit and reviewable, unlike a silent merge).
+- **Copy-once-and-forget** (stable, low-stakes, drift harmless): `.editorconfig`
+  (mirrors oxfmt's stable defaults), `.vscode/*`, `.nvmrc`. Optionally a
+  feather-light check; no sync.
+- **Dropped**: sync CLI, sync manifest, 3-way merge (`git merge-file`/diff3),
+  patch-replay, subtree/submodule.
+
+**Why not subtree/submodule** (considered — git's own 3-way merge is appealing):
+our canonical paths are scattered across three roots (`/`, `/.vscode`,
+`/.github/workflows`), which a single-prefix vendored tree can't map; submodules
+additionally make hand-editing require a fork. They don't remove the need for a
+sync step, so they're set aside (the "scaffold a repo from a template" model is
+the only place they'd fit).
+
+### Follow-ups (not in the current PR)
+
+- Convert **`lefthook`, GHA workflows, and `fallow`** from copy-once templates →
+  **live extension** (lefthook `extends` into `node_modules`; GHA reusable
+  workflows; `.fallowrc.json` `extends: ["@callumhoward/config-base/fallow", …]`).
+  The packages currently ship these under `templates/`.
+- Add a **`pnpm-workspace.yaml` policy JSON Schema** shipped by `config-base` +
+  a validation step wired into the lefthook + CI templates.
+- Decide whether to drop `.nvmrc` from the managed set (a one-time consumer
+  choice).
 
 ## Packages
 
