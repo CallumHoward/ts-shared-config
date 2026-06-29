@@ -21,9 +21,10 @@
     },
     "./tsconfig": "./tsconfig.base.json",
     "./fallow": "./fallow.json",
+    "./schema/pnpm-workspace": "./schema/pnpm-workspace.json",
     "./package.json": "./package.json"
   },
-  "files": ["dist", "tsconfig.base.json", "fallow.json", "lefthook.yml", "templates"],
+  "files": ["dist", "tsconfig.base.json", "fallow.json", "lefthook.yml", "schema", "templates"],
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },

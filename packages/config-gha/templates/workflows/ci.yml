@@ -1,10 +1,8 @@
-# CI template from @callumhoward/config-gha. Copy to .github/workflows/ci.yml.
+# CI caller from @callumhoward/config-gha. Copy to .github/workflows/ci.yml.
 #
-# Steps are labelled by tier — delete the ones for add-ons you don't use:
-#   [base]       always applicable (config-base)
-#   [stylelint]  keep if you have CSS (config-base ships stylelint)
-#   [app]        keep for app tiers that build (config-react / config-tanstack)
-#   [playwright] keep only with config-playwright + e2e tests
+# It calls the shared reusable workflow, so updates flow by bumping the @ref —
+# no need to re-copy. Pin to a release tag (e.g. @v1) for stability; @main
+# tracks the latest. Toggle the tier inputs for the add-ons you use.
 name: CI
 
 on:
@@ -13,87 +11,9 @@ on:
   pull_request:
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version-file: .nvmrc
-
-      - uses: pnpm/action-setup@v6
-
-      - name: Locate pnpm store
-        shell: bash
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"
-
-      - uses: actions/cache@v5
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      # [base]
-      - name: Typecheck
-        run: pnpm check
-
-      # [base]
-      - name: Lint
-        run: pnpm lint:ci
-
-      # [stylelint]
-      - name: Lint CSS
-        run: pnpm lint:css
-
-      # [base]
-      - name: Format check
-        run: pnpm format:check
-
-      # [base]
-      - name: Fallow
-        run: pnpm fallow
-
-      # [base]
-      - name: Test
-        run: pnpm test:cov
-
-      # [base] enforce coverage on changed lines only
-      - name: Diff coverage
-        run: |
-          pipx run diff-cover coverage/lcov.info \
-            --compare-branch origin/${{ github.base_ref || 'main' }} \
-            --fail-under 80
-
-      # [app]
-      - name: Build
-        run: pnpm build
-
-      # [playwright] -----------------------------------------------------------
-      - name: Cache Playwright browsers
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
-
-      - name: Install Playwright Chromium
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: E2E
-        run: pnpm test:e2e
-
-      - uses: actions/upload-artifact@v7
-        if: ${{ failure() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
-      # [/playwright] ----------------------------------------------------------
+  ci:
+    uses: callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml@main
+    with:
+      run-css: true # config-base ships stylelint
+      run-build: false # set true for app tiers (config-react / config-tanstack)
+      run-e2e: false # set true with config-playwright

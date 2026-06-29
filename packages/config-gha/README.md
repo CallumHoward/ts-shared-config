@@ -1,13 +1,18 @@
 # @callumhoward/config-gha
 
-Copy-once GitHub Actions templates for
-[ts-shared-config](https://github.com/CallumHoward/ts-shared-config): a CI
-pipeline and a scheduled pnpm-update PR workflow.
+GitHub Actions templates for
+[ts-shared-config](https://github.com/CallumHoward/ts-shared-config).
 
-GitHub Actions can't be `import`/`extends`-ed, so these ship as templates under
-[`templates/workflows/`](./templates/workflows) — copy them into
-`.github/workflows/` (re-copy to pick up updates).
+CI logic lives in a **reusable workflow** in this repo
+(`.github/workflows/ci-reusable.yml`), so the part you copy stays a thin caller
+and updates flow by bumping the `@ref` — no re-copy. The scheduled pnpm-update
+workflow is a standalone copy-once template.
 
-`ci.yml` tags each step `[base]` / `[stylelint]` / `[app]` / `[playwright]`;
-delete the steps for add-ons you don't use. See
-[`templates/README.md`](./templates/README.md).
+| Template | Copy to |
+| --- | --- |
+| `workflows/ci.yml` | `.github/workflows/ci.yml` (thin caller — toggle tier inputs) |
+| `workflows/update-pnpm.yml` | `.github/workflows/update-pnpm.yml` |
+
+The caller toggles `run-css` / `run-build` / `run-e2e` / `check-pnpm-policy`
+inputs for the add-ons you use. See [`templates/README.md`](./templates/README.md)
+for the input table and the package.json scripts the reusable workflow expects.
