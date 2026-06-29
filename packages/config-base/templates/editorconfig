@@ -1,5 +1,7 @@
-# Mirrors oxfmt's defaults so editors and the formatter never disagree.
-# Copy to .editorconfig
+# oxfmt reads .editorconfig (indent width, tabs-vs-spaces, end-of-line, …), so
+# this file is the single source of truth for whitespace — your editor and oxfmt
+# can't disagree. Copy to .editorconfig
+
 root = true
 
 [*]

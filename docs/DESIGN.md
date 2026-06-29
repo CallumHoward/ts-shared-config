@@ -203,9 +203,9 @@ concatenate.
   oxfmt, `pnpm check` (`tsc`, TS7/Go), `pnpm fallow`.
 - **pnpm-workspace** baseline snippet: `minimumReleaseAge: 10080`,
   `trustPolicy: no-downgrade` (+ `trustPolicyExclude`). `.nvmrc` Node pin.
-- **`.editorconfig`** whose values mirror oxfmt (indent, line endings, final
-  newline, etc.), finalized against `oxfmt.config.ts` so editors and oxfmt never
-  contradict each other.
+- **`.editorconfig`** — oxfmt **reads** it (indent width, tabs-vs-spaces,
+  end-of-line, …), so it's the single whitespace source of truth; editors and
+  oxfmt can't contradict each other.
 - **`.vscode/`** recommended `settings.json` (format-on-save with oxfmt as the
   default formatter) + `extensions.json` (oxc, stylelint). Editor-AI/LLM config
   deferred.
