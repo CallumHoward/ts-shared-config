@@ -20,14 +20,14 @@ export interface PlaywrightOptions {
 export function definePlaywright(options: PlaywrightOptions = {}): PlaywrightTestConfig {
   const {
     baseURL = "http://localhost:3000",
-    testDir = "./e2e",
-    devCommand = "pnpm dev",
+    testDir: testDirectory = "./e2e",
+    devCommand: developmentCommand = "pnpm dev",
     ciCommand = "pnpm serve",
   } = options;
-  const isCI = Boolean(process.env.CI);
+  const isCI = Boolean(process.env["CI"]);
 
   return defineConfig({
-    testDir,
+    testDir: testDirectory,
     fullyParallel: true,
     forbidOnly: isCI,
     retries: isCI ? 1 : 0,
@@ -38,7 +38,7 @@ export function definePlaywright(options: PlaywrightOptions = {}): PlaywrightTes
     },
     projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
     webServer: {
-      command: isCI ? ciCommand : devCommand,
+      command: isCI ? ciCommand : developmentCommand,
       url: baseURL,
       reuseExistingServer: !isCI,
       timeout: 120_000,

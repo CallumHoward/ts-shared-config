@@ -1,21 +1,30 @@
-import { createRequire } from "node:module";
+import {
+  bundledPlugins,
+  defineOxlint as defineBaseOxlint,
+  E2E_FILES,
+  type OxlintAddon,
+} from "@callumhoward/config-base/oxlint";
+import {
+  rulesFromConfig,
+  rulesFromNames,
+} from "@callumhoward/config-base/rules-from-config";
+import reactHooks from "eslint-plugin-react-hooks";
+import noEffect from "eslint-plugin-react-you-might-not-need-an-effect";
+import testingLibrary from "eslint-plugin-testing-library";
+import type { OxlintConfig } from "oxlint";
 
-import type { OxlintAddon } from "@callumhoward/config-base/oxlint";
+const plugin = bundledPlugins(import.meta.url);
 
-const require = createRequire(import.meta.url);
-
-const plugin = (name: string, spec: string) => ({ name, specifier: require.resolve(spec) });
-
-const testFiles = ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}", "!e2e/**"];
+const testFiles = ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"];
 
 /**
  * React add-on: react + jsx-a11y, the React Compiler hooks ruleset
  * (eslint-plugin-react-hooks), the you-might-not-need-an-effect rules, and
- * React Testing Library rules scoped to test files. Bundled jsPlugins are
- * resolved to absolute paths (see docs/DESIGN.md).
+ * React Testing Library rules scoped to test files.
  */
-export const react: OxlintAddon = {
+const react: OxlintAddon = {
   plugins: ["react", "jsx-a11y"],
+  env: { browser: true },
   jsPlugins: [
     plugin("react-hooks-js", "eslint-plugin-react-hooks"),
     plugin("no-effect", "eslint-plugin-react-you-might-not-need-an-effect"),
@@ -24,61 +33,97 @@ export const react: OxlintAddon = {
   rules: {
     "react/only-export-components": "warn",
     "react/no-array-index-key": "error",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks-js/hooks": "error",
-    "react-hooks-js/capitalized-calls": "error",
-    "react-hooks-js/component-hook-factories": "error",
-    "react-hooks-js/no-deriving-state-in-effects": "error",
-    "react-hooks-js/memo-dependencies": "error",
-    "react-hooks-js/memoized-effect-dependencies": "warn",
-    "react-hooks-js/exhaustive-effect-dependencies": "warn",
-    "react-hooks-js/static-components": "error",
-    "react-hooks-js/use-memo": "error",
-    "react-hooks-js/void-use-memo": "error",
-    "react-hooks-js/preserve-manual-memoization": "error",
-    "react-hooks-js/incompatible-library": "warn",
-    "react-hooks-js/immutability": "error",
-    "react-hooks-js/globals": "error",
-    "react-hooks-js/refs": "error",
-    "react-hooks-js/set-state-in-effect": "error",
-    "react-hooks-js/error-boundaries": "error",
-    "react-hooks-js/purity": "error",
-    "react-hooks-js/set-state-in-render": "error",
-    "react-hooks-js/unsupported-syntax": "warn",
-    "react-hooks-js/config": "error",
-    "react-hooks-js/gating": "error",
-    "no-effect/no-chain-state-updates": "warn",
-    "no-effect/no-event-handler": "warn",
-    "no-effect/no-adjust-state-on-prop-change": "warn",
-    "no-effect/no-reset-all-state-on-prop-change": "warn",
-    "no-effect/no-pass-live-state-to-parent": "warn",
-    "no-effect/no-pass-data-to-parent": "warn",
-    "no-effect/no-external-store-subscription": "warn",
-    "no-effect/no-initialize-state": "warn",
+    // Bans `import React` and `import * as React` in one stroke (a namespace
+    // import grants the restricted default). Automatic JSX needs no React
+    // binding; classic-transform entry points opt out with an inline disable.
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [
+          {
+            name: "react",
+            importNames: ["default"],
+            message:
+              "Import the specific APIs by name; automatic JSX needs no React import.",
+          },
+        ],
+      },
+    ],
+    ...rulesFromConfig({
+      plugin: reactHooks,
+      sourcePrefix: "react-hooks",
+      nativePrefix: "react",
+      jsPrefix: "react-hooks-js",
+      config: "recommended",
+    }),
+    ...rulesFromConfig({
+      plugin: noEffect,
+      sourcePrefix: "react-you-might-not-need-an-effect",
+      nativePrefix: "no-effect",
+      jsPrefix: "no-effect",
+      config: "recommended",
+    }),
+    // Compiler rules the recommended config leaves off. Routed, not hardcoded
+    // to the jsPlugin, so each switches to oxlint's native rule once ported.
+    ...rulesFromNames({
+      nativePrefix: "react",
+      jsPrefix: "react-hooks-js",
+      rules: {
+        hooks: "error",
+        "capitalized-calls": "error",
+        "component-hook-factories": "error",
+        "no-deriving-state-in-effects": "error",
+        "memo-dependencies": "error",
+        "memoized-effect-dependencies": "warn",
+        "exhaustive-effect-dependencies": "warn",
+        "void-use-memo": "error",
+      },
+    }),
   },
   overrides: [
     {
-      files: testFiles,
+      // React component files are PascalCase by convention; base allows only
+      // kebab-case, so widen it for every .tsx across React consumers.
+      files: ["**/*.tsx"],
       rules: {
-        "testing-library/await-async-queries": "error",
-        "testing-library/await-async-utils": "error",
-        "testing-library/no-await-sync-queries": "error",
-        "testing-library/no-debugging-utils": "warn",
-        "testing-library/no-dom-import": ["error", "react"],
-        "testing-library/no-node-access": "error",
-        "testing-library/no-promise-in-fire-event": "error",
-        "testing-library/no-unnecessary-act": "error",
-        "testing-library/no-wait-for-multiple-assertions": "error",
-        "testing-library/no-wait-for-side-effects": "error",
-        "testing-library/prefer-find-by": "error",
-        "testing-library/prefer-presence-queries": "error",
-        "testing-library/prefer-query-by-disappearance": "error",
-        "testing-library/prefer-screen-queries": "error",
+        "unicorn/filename-case": [
+          "error",
+          { cases: { kebabCase: true, pascalCase: true } },
+        ],
+      },
+    },
+    {
+      // Hook modules are named after the hook they export (useBoard.ts); the
+      // capital keeps user-settings.ts and users.ts on the kebab-case rule.
+      files: ["**/use[A-Z]*.{ts,tsx}"],
+      rules: {
+        "unicorn/filename-case": ["error", { cases: { camelCase: true } }],
+      },
+    },
+    {
+      files: testFiles,
+      excludeFiles: E2E_FILES,
+      rules: {
+        ...rulesFromConfig({
+          plugin: testingLibrary,
+          sourcePrefix: "testing-library",
+          nativePrefix: "testing-library",
+          jsPrefix: "testing-library",
+          config: "flat/react",
+        }),
         "testing-library/prefer-user-event": "error",
-        "testing-library/render-result-naming-convention": "error",
       },
     },
   ],
 };
 
-export default react;
+/**
+ * React preset: base + react rules, then further layers and per-package tweaks
+ * in argument order (later wins), e.g. `defineOxlint(tanstackRouter,
+ * playwright, { env: { browser: true } })`.
+ */
+export function defineOxlint(...addons: OxlintAddon[]): OxlintConfig {
+  return defineBaseOxlint(react, ...addons);
+}
+
+export default defineOxlint;

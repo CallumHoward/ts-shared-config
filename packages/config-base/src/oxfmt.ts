@@ -1,16 +1,15 @@
 import type { OxfmtConfig } from "oxfmt";
 
+import { buildOutputDirectories } from "./build-output.ts";
+
 /** The slice of an oxfmt config an add-on package contributes. */
 export type OxfmtAddon = Partial<OxfmtConfig>;
 
-/**
- * Vanilla-TS base: format JSDoc comment blocks and sort imports. Tailwind class
- * sorting (`sortTailwindcss`) is layered by the tailwind add-on.
- */
+/** Vanilla-TS base: format JSDoc comment blocks and sort imports. */
 export const base = {
   jsdoc: true,
   sortImports: true,
-  ignorePatterns: ["dist", ".output", "node_modules", "pnpm-lock.yaml"],
+  ignorePatterns: [...buildOutputDirectories, "node_modules", "pnpm-lock.yaml"],
 } satisfies OxfmtConfig;
 
 /** Compose the base oxfmt config with any number of add-on contributions. */

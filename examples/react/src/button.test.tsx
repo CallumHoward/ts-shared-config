@@ -6,7 +6,7 @@ import { Button } from "./button";
 
 describe("Button", () => {
   it("renders its label", () => {
-    render(<Button label="Save" onClick={() => undefined} />);
+    render(<Button label="Save" onClick={vi.fn<() => void>()} />);
     expect(screen.getByRole("button", { name: "Save" })).toBeTruthy();
   });
 

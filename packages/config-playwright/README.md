@@ -19,4 +19,7 @@ import playwright from "@callumhoward/config-playwright/oxlint";
 export default defineOxlint(playwright);
 ```
 
+The oxlint add-on scopes the plugin's recommended rules to `e2e/**`, which the
+base vitest rules and `vitest` itself exclude.
+
 `definePlaywright` accepts `{ baseURL, testDir, devCommand, ciCommand }`.

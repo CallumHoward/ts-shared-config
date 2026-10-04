@@ -1,18 +1,5 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "lib": ["ES2022"],
-    "types": ["node"],
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "dist",
-    "rootDir": "src",
-    "strict": true,
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true,
-    "noEmitOnError": true
-  },
+  "extends": "@callumhoward/config-base/tsconfig",
+  "compilerOptions": { "types": ["node"] },
   "include": ["src"]
 }

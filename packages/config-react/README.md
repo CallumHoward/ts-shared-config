@@ -11,14 +11,12 @@ pnpm add -D @callumhoward/config-base @callumhoward/config-react react react-dom
 
 ```ts
 // oxlint.config.ts
-import { defineOxlint } from "@callumhoward/config-base/oxlint";
-import react from "@callumhoward/config-react/oxlint";
-export default defineOxlint(react);
+import { defineOxlint } from "@callumhoward/config-react/oxlint";
+export default defineOxlint();
 
 // vite.config.ts
-import { defineViteConfig } from "@callumhoward/config-base/vite";
-import react from "@callumhoward/config-react/vite";
-export default defineViteConfig({ addons: [react] });
+import { defineViteConfig } from "@callumhoward/config-react/vite";
+export default defineViteConfig();
 ```
 
 ```jsonc
@@ -26,4 +24,12 @@ export default defineViteConfig({ addons: [react] });
 { "extends": ["@callumhoward/config-base/tsconfig", "@callumhoward/config-react/tsconfig"] }
 ```
 
-Opt out of the React Compiler with `reactVite({ reactCompiler: false })`.
+Both presets wrap the base ones: `defineOxlint(...addons)` and
+`defineViteConfig({ addons })` layer further add-ons (tanstack, tailwind, your
+own) in argument order. Opt out of the React Compiler with
+`defineViteConfig({ reactCompiler: false })`.
+
+`reactPlugins()` and `reactTest` are exported for builders that own their vite
+config (e.g. Storybook, vitest projects), and `axeRules`/`axeChecks` from
+`@callumhoward/config-react/axe-config` share the jsdom axe setup with browser
+a11y tests.

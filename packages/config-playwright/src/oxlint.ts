@@ -1,32 +1,38 @@
-import { createRequire } from "node:module";
+import {
+  bundledPlugins,
+  E2E_FILES,
+  type OxlintAddon,
+} from "@callumhoward/config-base/oxlint";
+import { rulesFromConfig } from "@callumhoward/config-base/rules-from-config";
+import playwrightPlugin from "eslint-plugin-playwright";
 
-import type { OxlintAddon } from "@callumhoward/config-base/oxlint";
-
-const require = createRequire(import.meta.url);
-
-const plugin = (name: string, spec: string) => ({ name, specifier: require.resolve(spec) });
+const plugin = bundledPlugins(import.meta.url);
 
 /**
- * Playwright add-on: the playwright lint plugin plus an `e2e/**` override with
- * the e2e ruleset and a `*.spec` filename convention. (Base scopes its vitest
- * rules to `!e2e/**`, so the two test rulesets never overlap.)
+ * Playwright add-on: the plugin's recommended rules, scoped to the `e2e/**`
+ * suites base carves out of its vitest override. Nothing applies outside them,
+ * so the add-on contributes no top-level rules.
  */
 export const playwright: OxlintAddon = {
   jsPlugins: [plugin("playwright", "eslint-plugin-playwright")],
   overrides: [
     {
-      files: ["e2e/**/*.{ts,tsx}"],
+      files: E2E_FILES,
       rules: {
+        ...rulesFromConfig({
+          plugin: playwrightPlugin,
+          sourcePrefix: "playwright",
+          nativePrefix: "playwright",
+          jsPrefix: "playwright",
+          config: "recommended",
+        }),
+        // Playwright fixtures destructure `{}`; rulesFromConfig keeps only
+        // prefixed rules, so recommended's own entry for this never arrives.
+        "no-empty-pattern": "off",
+        // Mirrors of base's vitest override, at the same severities.
         "playwright/require-top-level-describe": "error",
-        "playwright/no-skipped-test": "warn",
-        "playwright/no-focused-test": "error",
-        "playwright/no-conditional-in-test": "warn",
-        "playwright/valid-expect": "error",
-        "check-file/filename-naming-convention": [
-          "error",
-          { "e2e/**/*.{ts,tsx}": "+([^.])?(.@(spec))" },
-          { ignoreMiddleExtensions: false },
-        ],
+        "playwright/max-nested-describe": ["error", { max: 1 }],
+        "playwright/no-commented-out-tests": "warn",
       },
     },
   ],

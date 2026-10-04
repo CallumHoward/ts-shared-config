@@ -1,23 +1,36 @@
 import { createRequire } from "node:module";
 
+import typescriptEslint from "@typescript-eslint/eslint-plugin";
+import unicornPlugin from "eslint-plugin-unicorn";
 import type { OxlintConfig, OxlintOverride } from "oxlint";
 
-const require = createRequire(import.meta.url);
+import { buildOutputDirectories } from "./build-output.ts";
+import { concat, merge } from "./merge.ts";
+// Shared across preset packages via the ./rules-from-config export entry.
+import { rulesFromConfig } from "./rules-from-config.ts";
 
 type PluginName = NonNullable<OxlintConfig["plugins"]>[number];
 type JsPlugin = NonNullable<OxlintConfig["jsPlugins"]>[number];
+type BundledJsPlugin = Extract<JsPlugin, { specifier: string }>;
 type Rules = NonNullable<OxlintConfig["rules"]>;
 type Categories = NonNullable<OxlintConfig["categories"]>;
-type Env = NonNullable<OxlintConfig["env"]>;
+type Environment = NonNullable<OxlintConfig["env"]>;
 
 /**
- * Resolve a bundled jsPlugin to an absolute path so oxlint can load it from the
- * consumer regardless of pnpm hoisting (see docs/DESIGN.md — validated spike).
+ * Build a jsPlugin entry factory for the plugins a layer package bundles. Each
+ * entry resolves the plugin to an absolute path so oxlint can load it from the
+ * consumer regardless of pnpm hoisting. Pass the layer's own `import.meta.url`:
+ * under pnpm's isolated layout a plugin is only resolvable from the package
+ * that declares it.
  */
-const plugin = (name: string, spec: string): JsPlugin => ({
-  name,
-  specifier: require.resolve(spec),
-});
+export function bundledPlugins(
+  importMetaUrl: string,
+): (name: string, spec: string) => BundledJsPlugin {
+  const require = createRequire(importMetaUrl);
+  return (name, spec) => ({ name, specifier: require.resolve(spec) });
+}
+
+const plugin = bundledPlugins(import.meta.url);
 
 /** The slice of an oxlint config an add-on package contributes. */
 export interface OxlintAddon {
@@ -27,24 +40,148 @@ export interface OxlintAddon {
   overrides?: OxlintOverride[];
   ignorePatterns?: string[];
   categories?: Categories;
-  env?: Env;
+  env?: Environment;
+}
+
+/** Middle extensions any package's src files may carry (foo.test.ts). */
+export const SRC_MIDDLE_EXTENSIONS = ["test", "test-d", "d"];
+
+/** Middle extensions for package-root files (oxlint.config.ts). */
+export const ROOT_MIDDLE_EXTENSIONS = ["config", "d"];
+
+/**
+ * Playwright end-to-end suites. Carved out of the vitest override here and of
+ * vitest's `exclude` in vite.ts; the playwright layer scopes its rules to it.
+ */
+export const E2E_FILES = ["e2e/**"];
+
+/**
+ * Options for check-file/filename-naming-convention: the shared middle
+ * extensions merged with a package's own (e.g. colocated `stories` files).
+ */
+export function filenameNamingConvention(
+  extra: { root?: string[]; src?: string[] } = {},
+): ["error", Record<string, string>, { ignoreMiddleExtensions: boolean }] {
+  const sourceExtensions = [...SRC_MIDDLE_EXTENSIONS, ...(extra.src ?? [])];
+  const rootExtensions = [...ROOT_MIDDLE_EXTENSIONS, ...(extra.root ?? [])];
+  return [
+    "error",
+    {
+      "src/**/*.{ts,tsx}": `+([^.])?(.@(${sourceExtensions.join("|")}))`,
+      "*.{ts,tsx}": `+([^.])?(.@(${rootExtensions.join("|")}))`,
+    },
+    { ignoreMiddleExtensions: false },
+  ];
 }
 
 /** Vanilla-TS base: type-safety, hygiene, filename and JSDoc discipline, vitest. */
 export const base = {
-  plugins: ["typescript", "unicorn", "oxc", "import", "promise", "jsdoc", "vitest"],
-  jsPlugins: [plugin("check-file", "eslint-plugin-check-file")],
+  plugins: [
+    "typescript",
+    "unicorn",
+    "oxc",
+    "import",
+    "promise",
+    "jsdoc",
+    "vitest",
+  ],
+  jsPlugins: [
+    plugin("check-file", "eslint-plugin-check-file"),
+    plugin("unicorn-x", "eslint-plugin-unicorn"),
+    plugin(
+      "eslint-comments",
+      "@eslint-community/eslint-plugin-eslint-comments",
+    ),
+    plugin("ts-eslint-js", "@typescript-eslint/eslint-plugin"),
+  ],
   categories: { correctness: "error" },
   env: { builtin: true },
-  ignorePatterns: ["node_modules", "dist", ".output"],
+  ignorePatterns: [...buildOutputDirectories, "node_modules"],
   rules: {
+    ...rulesFromConfig({
+      plugin: unicornPlugin,
+      sourcePrefix: "unicorn",
+      nativePrefix: "unicorn",
+      jsPrefix: "unicorn-x",
+      config: "recommended",
+    }),
     "unicorn/filename-case": ["error", { case: "kebabCase" }],
     "unicorn/no-null": "off",
-    "typescript/no-floating-promises": "error",
-    "typescript/no-misused-promises": "error",
-    "typescript/await-thenable": "error",
+    // Libraries shouldn't kill the host process; CLI entry points opt out inline.
+    "unicorn/no-process-exit": "error",
+    // vitest plugin is enabled globally; scope require-hook to the test override.
+    "vitest/require-hook": "off",
+    "unicorn-x/prevent-abbreviations": [
+      "error",
+      {
+        // Word-level, so the whole {Component}Props convention passes without
+        // an allowList entry per component; allowList is checked per-word too,
+        // but case-sensitively, so `props` alone never covered `ButtonProps`.
+        // docs is a common domain term (Storybook docs, docsPath).
+        replacements: { docs: false, props: false, ref: false },
+        allowList: {
+          args: true,
+          dir: true,
+          env: true,
+          err: true,
+          fn: true,
+          opts: true,
+          outDir: true,
+          params: true,
+        },
+      },
+    ],
+    // jsPlugin rules sit outside `categories`, so the eslint-comments
+    // recommended set needs enabling explicitly. no-unlimited-disable is
+    // covered by the native no-abusive-eslint-disable below, which also
+    // understands `oxlint-disable` comments.
+    "eslint-comments/require-description": "error",
+    // allowWholeFile keeps top-of-file disables legal (scoped ones still pair).
+    "eslint-comments/disable-enable-pair": ["error", { allowWholeFile: true }],
+    "eslint-comments/no-aggregating-enable": "error",
+    "eslint-comments/no-duplicate-disable": "error",
+    "eslint-comments/no-unused-enable": "error",
+    "unicorn/no-abusive-eslint-disable": "error",
+    // typescript-eslint's strictTypeChecked set. Oxlint ports nearly all of it
+    // natively (type-aware rules via tsgolint); the rest run as a jsPlugin.
+    ...rulesFromConfig({
+      plugin: typescriptEslint,
+      sourcePrefix: "@typescript-eslint",
+      nativePrefix: "typescript",
+      jsPrefix: "ts-eslint-js",
+      config: "flat/strict-type-checked",
+    }),
+    // Need type information, which the jsPlugin runtime cannot provide.
+    "ts-eslint-js/no-generated-empty-object-type": "off",
+    "ts-eslint-js/no-unsafe-enum-assignment": "off",
+    // The native core rule already covers it.
+    "ts-eslint-js/no-unused-vars": "off",
     "typescript/switch-exhaustiveness-check": "error",
     "typescript/no-unnecessary-condition": "warn",
+    // `onClick={() => setOpen(true)}` is idiomatic; braces would add noise.
+    "typescript/no-confusing-void-expression": [
+      "error",
+      { ignoreArrowShorthand: true },
+    ],
+    // Nullish and numbers allowed: CSS module lookups are `string | undefined`
+    // under noUncheckedIndexedAccess, and numbers stringify predictably.
+    "typescript/restrict-template-expressions": [
+      "error",
+      {
+        allowAny: false,
+        allowBoolean: false,
+        allowNever: false,
+        allowNullish: true,
+        allowNumber: true,
+        allowRegExp: false,
+      },
+    ],
+    // eslint-recommended core rules that strictTypeChecked builds on; oxlint
+    // puts them outside the correctness category.
+    "no-var": "error",
+    "prefer-const": "error",
+    "prefer-rest-params": "error",
+    "prefer-spread": "error",
     "import/no-cycle": "error",
     "no-restricted-imports": [
       "error",
@@ -52,7 +189,8 @@ export const base = {
         patterns: [
           {
             regex: "^@/",
-            message: "Use the '#/' alias for src imports (the '@/' alias was removed).",
+            message:
+              "Use the '#/' alias for src imports (the '@/' alias was removed).",
           },
         ],
       },
@@ -67,14 +205,7 @@ export const base = {
         "**/__test*/**": "co-located *.test.ts (no __tests__ dirs)",
       },
     ],
-    "check-file/filename-naming-convention": [
-      "error",
-      {
-        "src/**/*.{ts,tsx}": "+([^.])?(.@(test|test-d|stories|d))",
-        "*.{ts,tsx}": "+([^.])?(.@(config|d))",
-      },
-      { ignoreMiddleExtensions: false },
-    ],
+    "check-file/filename-naming-convention": filenameNamingConvention(),
     "jsdoc/check-tag-names": "error",
     "jsdoc/check-property-names": "error",
     "jsdoc/check-access": "error",
@@ -83,50 +214,57 @@ export const base = {
   },
   overrides: [
     {
-      files: ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}", "!e2e/**"],
+      files: ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"],
+      excludeFiles: E2E_FILES,
       rules: {
         "vitest/require-top-level-describe": "error",
-        "vitest/consistent-test-it": ["error", { fn: "it", withinDescribe: "it" }],
+        // Flat suites stay scannable; group with sibling top-level describes
+        // instead (https://kentcdodds.com/blog/avoid-nesting-when-youre-testing).
+        "vitest/max-nested-describe": ["error", { max: 1 }],
+        "vitest/consistent-test-it": [
+          "error",
+          { fn: "it", withinDescribe: "it" },
+        ],
         "vitest/no-identical-title": "error",
+        // assertNoFailures wraps expect.soft for soft-assertion audit helpers
+        "vitest/expect-expect": [
+          "error",
+          { assertFunctionNames: ["expect", "assertNoFailures"] },
+        ],
         "vitest/no-commented-out-tests": "warn",
         "vitest/no-duplicate-hooks": "error",
         "vitest/prefer-hooks-in-order": "error",
         "vitest/prefer-hooks-on-top": "error",
         "vitest/require-hook": "error",
+        // Fixtures have a known shape; asserting it beats optional chaining
+        // that would let a missing fixture pass silently.
+        "typescript/no-non-null-assertion": "off",
       },
     },
   ],
 } satisfies OxlintConfig;
 
-/** Compose the base oxlint config with any number of add-on contributions. */
+/**
+ * Vanilla-TS preset: the base config with addon slices layered in argument
+ * order (later wins). Preset packages (config-react) pass their addon followed
+ * by the consumer's tweaks; package configs typically pass one tweaks object.
+ */
 export function defineOxlint(...addons: OxlintAddon[]): OxlintConfig {
-  const plugins = new Set<PluginName>(base.plugins as PluginName[]);
-  const jsPlugins: JsPlugin[] = [...base.jsPlugins];
-  const rules: Rules = { ...(base.rules as Rules) };
-  const overrides: OxlintOverride[] = [...(base.overrides as OxlintOverride[])];
-  const ignorePatterns: string[] = [...base.ignorePatterns];
-  let categories: Categories = { ...base.categories };
-  let env: Env = { ...base.env };
-
-  for (const addon of addons) {
-    addon.plugins?.forEach((p) => plugins.add(p));
-    if (addon.jsPlugins) jsPlugins.push(...addon.jsPlugins);
-    if (addon.rules) Object.assign(rules, addon.rules);
-    if (addon.overrides) overrides.push(...addon.overrides);
-    if (addon.ignorePatterns) ignorePatterns.push(...addon.ignorePatterns);
-    if (addon.categories) categories = { ...categories, ...addon.categories };
-    if (addon.env) env = { ...env, ...addon.env };
-  }
-
+  // Widen base's narrowed literal fields to the addon field types in one go.
+  const seed: Required<OxlintAddon> = base;
   return {
     ...base,
-    plugins: [...plugins],
-    jsPlugins,
-    rules,
-    overrides,
-    ignorePatterns,
-    categories,
-    env,
+    plugins: [...new Set(concat(seed.plugins, addons, (a) => a.plugins))],
+    jsPlugins: concat(seed.jsPlugins, addons, (a) => a.jsPlugins),
+    rules: merge(seed.rules, addons, (a) => a.rules),
+    overrides: concat(seed.overrides, addons, (a) => a.overrides),
+    ignorePatterns: concat(
+      seed.ignorePatterns,
+      addons,
+      (a) => a.ignorePatterns,
+    ),
+    categories: merge(seed.categories, addons, (a) => a.categories),
+    env: merge(seed.env, addons, (a) => a.env),
   };
 }
 

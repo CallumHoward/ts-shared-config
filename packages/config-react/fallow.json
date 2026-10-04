@@ -1,4 +1,18 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
-  "ignoreDependencies": ["jsdom"]
+  // Self-contained superset of config-base's fallow.json (keep in sync):
+  // fallow extends can't take package specifiers, no relative path survives
+  // every install layout, and its per-key last-wins merge means this file
+  // must carry the full ignoreDependencies union anyway.
+  "entry": ["oxfmt.config.ts", "oxlint.config.ts"],
+  "ignoreDependencies": [
+    "eslint-plugin-check-file",
+    "eslint-plugin-unicorn",
+    "@eslint-community/eslint-plugin-eslint-comments",
+    "eslint-plugin-react-hooks",
+    "eslint-plugin-react-you-might-not-need-an-effect",
+    "eslint-plugin-testing-library",
+    "oxc-transform-react",
+    "jsdom"
+  ]
 }

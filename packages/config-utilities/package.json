@@ -1,0 +1,25 @@
+{
+  "name": "@callumhoward/config-utilities",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./oxlint-fixtures": "./src/oxlint-fixtures.ts"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "lint": "pnpm run lint:ts",
+    "lint:ts": "oxlint --type-aware --report-unused-disable-directives-severity=error",
+    "lint:ci": "oxlint --type-aware --report-unused-disable-directives-severity=error --format=github",
+    "lint:fix": "oxlint --type-aware --report-unused-disable-directives-severity=error --fix"
+  },
+  "devDependencies": {
+    "@callumhoward/config-base": "workspace:*",
+    "@types/node": "^24.13.2",
+    "oxlint": "^1.79.0",
+    "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "oxlint": "^1.79.0"
+  }
+}
