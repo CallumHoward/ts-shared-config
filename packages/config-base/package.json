@@ -82,9 +82,9 @@
     "vitest": "^5.0.0"
   },
   "peerDependencies": {
-    "fallow": "^2.89.0",
+    "fallow": "^2.89.0 || ^3.0.0",
     "lefthook": "^2.1.9",
-    "oxfmt": "^0.58.0",
+    "oxfmt": ">=0.58.0 <1.0.0",
     "oxlint": "^1.79.0",
     "oxlint-tsgolint": "^7.0.2001",
     "stylelint": "^17.14.0",
