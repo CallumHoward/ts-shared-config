@@ -24,7 +24,7 @@ LLM-ready.
 ## Base usage
 
 ```sh
-pnpm add -D @wcmj/config-base oxlint oxlint-tsgolint oxfmt stylelint vitest vite typescript lefthook fallow
+pnpm add -D @wcmj/config-base oxlint oxlint-tsgolint oxfmt stylelint vitest @vitest/coverage-v8 vite typescript lefthook fallow
 ```
 
 ```ts
@@ -111,7 +111,7 @@ Configs are authored in TypeScript and built with `tsc` to `dist` (`.js` +
 are preserved, not bundled — they resolve in the consumer. Any package a config
 references *by name* (oxlint jsPlugins, stylelint `extends`) is resolved to an
 absolute path via `require.resolve`, so it loads from the consumer regardless of
-pnpm hoisting. See [`docs/DESIGN.md`](./docs/DESIGN.md).
+pnpm hoisting.
 
 ## Develop
 
@@ -121,3 +121,14 @@ pnpm build       # build all packages
 pnpm validate    # build, then check, lint, format and test the packages and examples
 pnpm changeset   # record a version bump (config-* packages are version-locked)
 ```
+
+## Releasing
+
+Add a changeset with each change to a published package. The `config-*`
+packages are version-locked, so any bump releases all six. On merge to `main`,
+the Release workflow opens a "chore: version packages" PR; merging it publishes
+to npm with provenance and moves the `v1` tag the CI caller template points at.
+
+Publishing uses npm trusted publishing (OIDC), so no npm token is stored: each
+package lists this repo's `release.yml` as its trusted publisher on npmjs.com.
+A new package has to be published once by hand before that can be configured.

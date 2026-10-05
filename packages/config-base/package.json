@@ -77,13 +77,14 @@
     "vitest": "^5.0.0"
   },
   "peerDependencies": {
+    "@vitest/coverage-v8": "^5.0.0",
     "fallow": "^2.89.0 || ^3.0.0",
     "lefthook": "^2.1.9",
     "oxfmt": ">=0.58.0 <1.0.0",
     "oxlint": "^1.79.0",
-    "oxlint-tsgolint": "^7.0.2001",
+    "oxlint-tsgolint": "^7.0.2003",
     "stylelint": "^17.14.0",
-    "typescript": ">=6",
+    "typescript": ">=6 <6.1.0",
     "vite": "^8.0.0",
     "vitest": "^5.0.0"
   }
