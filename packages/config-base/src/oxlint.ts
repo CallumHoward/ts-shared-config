@@ -49,6 +49,17 @@ const typeInformationRules = [
   "no-unsafe-enum-assignment",
 ];
 
+// Turns off `prefix/name` for each name the plugin's rules map has.
+export function offWhenPresent(
+  prefix: string,
+  names: readonly string[],
+  pluginRules: Record<string, unknown>,
+): Record<string, "off"> {
+  return Object.fromEntries(
+    names.filter((name) => name in pluginRules).map((name) => [`${prefix}/${name}`, "off"]),
+  );
+}
+
 export const SRC_MIDDLE_EXTENSIONS = ["test", "test-d", "d"];
 
 /** Middle extensions for package-root files (oxlint.config.ts). */
@@ -159,11 +170,7 @@ export const base = {
     // Need type information, which the jsPlugin runtime cannot provide. Only
     // those the installed plugin has: oxlint rejects a rule it can't find, even
     // when off, and typescript-eslint adds rules between minors.
-    ...Object.fromEntries(
-      typeInformationRules
-        .filter((name) => name in typescriptEslint.rules)
-        .map((name) => [`ts-eslint-js/${name}`, "off"]),
-    ),
+    ...offWhenPresent("ts-eslint-js", typeInformationRules, typescriptEslint.rules),
     // The native core rule already covers it.
     "ts-eslint-js/no-unused-vars": "off",
     "typescript/switch-exhaustiveness-check": "error",
