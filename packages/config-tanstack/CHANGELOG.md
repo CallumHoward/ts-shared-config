@@ -1,5 +1,12 @@
 # @wcmj/config-tanstack
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [68cfae6]
+  - @wcmj/config-base@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
