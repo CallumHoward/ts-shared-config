@@ -12,8 +12,8 @@ importers:
         specifier: ^2.27.0
         version: 2.31.0(@types/node@24.13.2)
       '@wcmj/sill':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.1.1
+        version: 0.1.1
 
   examples/playwright:
     devDependencies:
@@ -2026,8 +2026,8 @@ packages:
   '@vitest/spy@5.0.3':
     resolution: {integrity: sha512-XhFysQTB8AZ+P4gMi+Lpo99vg2AZi0qKpaB9yXQl37+CaMEAPO3iH/wGVnSyL5MPERiLezpqTVtrR6UZH5GCXg==}
 
-  '@wcmj/sill@0.1.0':
-    resolution: {integrity: sha512-gUYgdiccM2ROHkohBpSCsizBUXejNPurGLpIbrdJG9uXTixvbC12a448NzIdnELznBF7VtMYrPFWbZkDNbBvMQ==}
+  '@wcmj/sill@0.1.1':
+    resolution: {integrity: sha512-2oQM0fK6vpYjj6E58d5nx77m+bvZJmxFjgayreBSIJogeYG5qN95d2yG3I8MpO3JYdKcH5N1/cL7AA1KlMoUsQ==}
     engines: {node: '>=20.19'}
     hasBin: true
 
@@ -5466,7 +5466,7 @@ snapshots:
 
   '@vitest/spy@5.0.3': {}
 
-  '@wcmj/sill@0.1.0':
+  '@wcmj/sill@0.1.1':
     dependencies:
       '@humanwhocodes/momoa': 3.3.13
       ajv: 8.20.0
