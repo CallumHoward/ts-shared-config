@@ -1,30 +1,35 @@
 # Scheduled pnpm-bump PR template from @wcmj/config-gha.
 # Copy to .github/workflows/update-pnpm.yml.
 #
+# Needs a GitHub App (repo variable APP_CLIENT_ID, secret APP_PRIVATE_KEY) so the
+# PR it opens triggers CI; a PAT works too if you swap the token step.
+name: Update pnpm
+
 # Opens a PR to bump the pnpm version pinned in package.json's "packageManager"
 # field (which CI and pnpm/action-setup read) to the latest release.
 #
 # Runs on the 1st and 15th of each month (~every 2 weeks). Cron is always UTC.
 # Use the "Run workflow" button to trigger a check on demand.
-name: Update pnpm
-
 on:
   schedule:
     - cron: "0 8 1,15 * *"
   workflow_dispatch:
 
+# The branch push and PR use a GitHub App token, so GITHUB_TOKEN only needs read.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # create-pull-request authenticates with the App token, not persisted creds.
+          persist-credentials: false
 
       # Pin Node to the repo's version so the registry query runs deterministically.
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
 
@@ -32,7 +37,7 @@ jobs:
         id: versions
         shell: bash
         run: |
-          current=$(node -p "require('./package.json').packageManager.split('@')[1]")
+          current=$(node -p "require('./package.json').packageManager.split('@')[1].split('+')[0]")
           latest=$(npm view pnpm version)
           echo "current=$current" >> "$GITHUB_OUTPUT"
           echo "latest=$latest" >> "$GITHUB_OUTPUT"
@@ -50,16 +55,42 @@ jobs:
           CURRENT: ${{ steps.versions.outputs.current }}
           LATEST: ${{ steps.versions.outputs.latest }}
         run: |
+          # A Corepack-hashed pin (pnpm@x+sha512.<hex>) keeps a hash: the registry's
+          # sha512 integrity, base64-decoded to hex, is what Corepack records.
+          suffix=""
+          if grep -q "\"packageManager\": \"pnpm@[^\"]*+sha512\." package.json; then
+            integrity=$(npm view "pnpm@${LATEST}" dist.integrity)
+            suffix="+sha512.$(node -p "Buffer.from(process.argv[1].replace('sha512-', ''), 'base64').toString('hex')" "$integrity")"
+          fi
           # Targeted replace so the rest of package.json formatting is untouched.
-          sed -i "s/\"packageManager\": \"pnpm@${CURRENT}\"/\"packageManager\": \"pnpm@${LATEST}\"/" package.json
+          sed -i "s/\"packageManager\": \"pnpm@${CURRENT}[^\"]*\"/\"packageManager\": \"pnpm@${LATEST}${suffix}\"/" package.json
+
+      # pnpm 12 records the pinned pnpm version in pnpm-lock.yaml, so bumping only
+      # package.json breaks `pnpm install --frozen-lockfile`. Install the current pnpm
+      # (it self-switches to the new pinned version) and regenerate the lockfile.
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        if: steps.versions.outputs.changed == 'true'
+
+      - name: Regenerate lockfile
+        if: steps.versions.outputs.changed == 'true'
+        run: pnpm install --lockfile-only
+
+      # An App token (unlike GITHUB_TOKEN) lets the PR trigger the CI workflow.
+      - name: Generate App token
+        if: steps.versions.outputs.changed == 'true'
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
 
       - name: Create pull request
         if: steps.versions.outputs.changed == 'true'
-        # Note: PRs opened with the default GITHUB_TOKEN do not trigger the CI
-        # workflow. To have CI run automatically on this PR, pass a PAT or GitHub
-        # App token via `token:` here instead.
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
+          token: ${{ steps.app-token.outputs.token }}
           commit-message: "chore: update pnpm to ${{ steps.versions.outputs.latest }}"
           branch: chore/update-pnpm
           delete-branch: true
@@ -69,7 +100,7 @@ jobs:
             field from `${{ steps.versions.outputs.current }}` to
             `${{ steps.versions.outputs.latest }}`.
 
-            CI's `pnpm/action-setup@v6` reads this field, so no workflow changes
+            CI's `pnpm/action-setup` reads this field, so no workflow changes
             are needed.
 
             Release notes: https://github.com/pnpm/pnpm/releases/tag/v${{ steps.versions.outputs.latest }}
