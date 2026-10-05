@@ -2,7 +2,7 @@ import stylelint from "stylelint";
 import type { Config } from "stylelint";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import base, { MESSAGES, defineStylelint } from "./stylelint.ts";
+import base, { defineStylelint } from "./stylelint.ts";
 
 /** Lint a CSS string through the composed preset and return its warnings. */
 async function lintWarnings(code: string): Promise<{ line: number; rule: string; text: string }[]> {
@@ -29,31 +29,6 @@ async function lintRules(code: string): Promise<string[]> {
   return warnings.map((w) => w.rule);
 }
 
-describe("property-disallowed-list message", () => {
-  const [, options] = base.rules["property-disallowed-list"];
-  if (options === undefined || Array.isArray(options)) {
-    throw new TypeError("expected secondary options with a message function");
-  }
-
-  it("branches between the forced-colors and shorthand bans", () => {
-    expect(options.message("forced-color-adjust")).toBe(MESSAGES.FORCED_COLOR_ADJUST);
-    expect(options.message("font")).toBe(MESSAGES.FONT_GRID_SHORTHAND);
-    expect(options.message("grid")).toBe(MESSAGES.FONT_GRID_SHORTHAND);
-  });
-
-  it("bans the font and grid shorthands but not their longhands", async () => {
-    for (const code of [".x-a { font: inherit; }", ".x-a { grid: auto-flow / 1fr; }"]) {
-      expect(await lintRules(code)).toContain("property-disallowed-list");
-    }
-    for (const code of [
-      ".x-a { font-size: var(--font-size-body); }",
-      ".x-a { grid-template-columns: 1fr; }",
-    ]) {
-      expect(await lintRules(code)).not.toContain("property-disallowed-list");
-    }
-  });
-});
-
 describe("defineStylelint", () => {
   it("returns the base config when called with no addons", () => {
     const config = defineStylelint();
@@ -77,10 +52,11 @@ describe("defineStylelint", () => {
 
   it("replaces rule options wholesale rather than deep-merging", () => {
     const config = defineStylelint({
-      rules: { "property-disallowed-list": [["forced-color-adjust"], {}] },
+      rules: { "selector-max-id": 2 },
     });
-    expect(config.rules?.["property-disallowed-list"]).toEqual([["forced-color-adjust"], {}]);
+    expect(config.rules?.["selector-max-id"]).toBe(2);
   });
+
 });
 
 describe("composed preset policy", () => {
@@ -91,19 +67,6 @@ describe("composed preset policy", () => {
         ".x-a {\n  /* stylelint-disable-next-line declaration-no-important -- essential motion */\n  margin: 0 !important;\n}",
       ),
     ).toEqual([]);
-  });
-
-  it("limits nesting to two levels but not at-rule wrappers", async () => {
-    expect(
-      await lintRules(
-        ".x-a {\n  & > .x-b {\n    & > .x-c {\n      & > .x-d {\n        margin: 0;\n      }\n    }\n  }\n}",
-      ),
-    ).toContain("max-nesting-depth");
-    expect(
-      await lintRules(
-        "@media (width >= 40em) {\n  @supports (display: grid) {\n    .x-a {\n      & > .x-b {\n        margin: 0;\n      }\n    }\n  }\n}",
-      ),
-    ).not.toContain("max-nesting-depth");
   });
 
   it("rejects id selectors and unknown animations", async () => {
