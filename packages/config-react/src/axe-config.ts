@@ -1,10 +1,9 @@
 /**
- * Shared axe-core configuration for component a11y checks, split by
- * environment. jsdom unit tests consume it via vitest-setup; layout-dependent
- * rules (color-contrast, target-size) can't compute in jsdom and belong to
- * Storybook browser tests, which should reuse this map and re-enable them
- * (addon-a11y takes rules as an array: `Object.entries(axeRules).map(([id,
- * rule]) => ({ id, ...rule }))`).
+ * Shared axe-core configuration for component a11y checks. jsdom unit tests
+ * consume it via vitest-setup. Layout-dependent rules (color-contrast,
+ * target-size) can't be evaluated meaningfully in jsdom, so browser-based a11y
+ * tests can reuse this map and enable them. For a tool that takes rules as an
+ * array: `Object.entries(axeRules).map(([id, rule]) => ({ id, ...rule }))`.
  */
 
 /**
@@ -17,21 +16,22 @@ export const axeChecks = [
 ];
 
 export const axeRules: Record<string, { enabled: boolean }> = {
-  // jsdom has no canvas, so axe can't compute colors. Storybook browser
-  // tests re-enable this (and add target-size, which axe silently skips in
-  // jsdom for want of layout — enabling it here would be false confidence).
+  // jsdom has no canvas, so axe can't compute colors; it reports contrast as
+  // incomplete. Browser tests enable this (and target-size, which is off by
+  // default and meaningless without layout — a 2x2 button passes in jsdom).
   "color-contrast": { enabled: false },
   // Components are rendered in isolation, not as a full page, so the
   // page-level landmark best-practice rule does not apply here.
   region: { enabled: false },
   // Experimental structural/semantic rules that compute fine in jsdom.
   "focus-order-semantics": { enabled: true },
-  "label-content-name-mismatch": { enabled: true },
   "table-fake-caption": { enabled: true },
   "td-has-header": { enabled: true },
-  // Style-dependent trio: near-inert in jsdom (inline styles only), enabled
-  // so browser environments sharing this map get their full signal.
+  // Layout- or style-dependent: near-inert in jsdom (it reports
+  // label-content-name-mismatch as incomplete, never a violation), enabled so
+  // browser environments sharing this map get their full signal.
   "css-orientation-lock": { enabled: true },
+  "label-content-name-mismatch": { enabled: true },
   "hidden-content": { enabled: true },
   "p-as-heading": { enabled: true },
 };

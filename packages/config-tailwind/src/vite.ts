@@ -2,7 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 import type { ViteAddon } from "@wcmj/config-base/vite";
 
-/** Tailwind v4 vite plugin, ordered before framework plugins (matches the starter). */
+/** Tailwind v4 vite plugin. */
 export const tailwindVite: ViteAddon = {
   order: 0,
   plugins: () => [tailwindcss()],

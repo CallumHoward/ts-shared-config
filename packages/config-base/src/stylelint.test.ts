@@ -5,7 +5,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import base, { defineStylelint } from "./stylelint.ts";
 
 /** Lint a CSS string through the composed preset and return its warnings. */
-async function lintWarnings(code: string): Promise<{ line: number; rule: string; text: string }[]> {
+async function lintWarnings(
+  code: string,
+): Promise<{ line: number; rule: string; text: string }[]> {
   const result = await stylelint.lint({ code, config: defineStylelint() });
   return result.results.flatMap((r) =>
     r.warnings.map((w) => ({ line: w.line, rule: w.rule, text: w.text })),
@@ -51,17 +53,19 @@ describe("defineStylelint", () => {
   });
 
   it("replaces rule options wholesale rather than deep-merging", () => {
-    const config = defineStylelint({
-      rules: { "selector-max-id": 2 },
-    });
-    expect(config.rules?.["selector-max-id"]).toBe(2);
+    const config = defineStylelint(
+      { rules: { "color-named": ["never", { ignore: ["inside-function"] }] } },
+      { rules: { "color-named": ["never", {}] } },
+    );
+    expect(config.rules?.["color-named"]).toEqual(["never", {}]);
   });
-
 });
 
 describe("composed preset policy", () => {
   it("bans !important but honors a justified inline disable", async () => {
-    expect(await lintRules(".x-a { margin: 0 !important; }")).toContain("declaration-no-important");
+    expect(await lintRules(".x-a { margin: 0 !important; }")).toContain(
+      "declaration-no-important",
+    );
     expect(
       await lintRules(
         ".x-a {\n  /* stylelint-disable-next-line declaration-no-important -- essential motion */\n  margin: 0 !important;\n}",
@@ -71,7 +75,9 @@ describe("composed preset policy", () => {
 
   it("rejects id selectors and unknown animations", async () => {
     expect(await lintRules("#x-a { margin: 0; }")).toContain("selector-max-id");
-    expect(await lintRules(".x-a { animation: nope 1s; }")).toContain("no-unknown-animations");
+    expect(await lintRules(".x-a { animation: nope 1s; }")).toContain(
+      "no-unknown-animations",
+    );
   });
 
   it("reports an unused disable instead of ignoring it", async () => {

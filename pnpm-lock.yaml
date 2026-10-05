@@ -15,7 +15,7 @@ importers:
   examples/playwright:
     devDependencies:
       '@playwright/test':
-        specifier: ^1.60.0
+        specifier: ^1.61.1
         version: 1.61.1
       '@wcmj/config-base':
         specifier: workspace:*

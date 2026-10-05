@@ -1,7 +1,7 @@
 /**
  * Light CSS policy on top of stylelint-config-standard. Stylelint replaces rule
- * config wholesale, so layers compose from the exported building blocks when
- * widening rules.
+ * config wholesale, so an add-on that restates a rule replaces its options
+ * rather than merging into them.
  */
 import { createRequire } from "node:module";
 

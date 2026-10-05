@@ -30,6 +30,6 @@ own) in argument order. Opt out of the React Compiler with
 `defineViteConfig({ reactCompiler: false })`.
 
 `reactPlugins()` and `reactTest` are exported for builders that own their vite
-config (e.g. Storybook, vitest projects), and `axeRules`/`axeChecks` from
+config (e.g. vitest projects), and `axeRules`/`axeChecks` from
 `@wcmj/config-react/axe-config` share the jsdom axe setup with browser
 a11y tests.

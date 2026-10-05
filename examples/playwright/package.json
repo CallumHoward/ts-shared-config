@@ -9,7 +9,7 @@
     "check": "tsc -p tsconfig.json"
   },
   "devDependencies": {
-    "@playwright/test": "^1.60.0",
+    "@playwright/test": "^1.61.1",
     "@wcmj/config-base": "workspace:*",
     "@wcmj/config-playwright": "workspace:*",
     "oxfmt": "^0.58.0",

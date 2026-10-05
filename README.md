@@ -6,7 +6,7 @@ layer on for the bits a given project actually needs.
 
 Extracted from [tanstack-react-ts-starter](https://github.com/CallumHoward/tanstack-react-ts-starter),
 whose principles it follows: as much config in TypeScript as practical;
-opinionated and very modern (oxlint + oxfmt + `tsc`/TS7 + fallow, vitest,
+opinionated and very modern (oxlint + oxfmt + `tsc` + fallow, vitest,
 React 19 + Compiler, Vite 8, pnpm 11); strict quality gates; supply-chain-aware;
 LLM-ready.
 
@@ -118,6 +118,6 @@ pnpm hoisting. See [`docs/DESIGN.md`](./docs/DESIGN.md).
 ```sh
 pnpm install
 pnpm build       # build all packages
-pnpm validate    # build + lint + lint:css + format:check + check + test across examples
+pnpm validate    # build, then check, lint, format and test the packages and examples
 pnpm changeset   # record a version bump (config-* packages are version-locked)
 ```

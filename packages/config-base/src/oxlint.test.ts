@@ -39,9 +39,16 @@ describe("filenameNamingConvention", () => {
 
 describe("offWhenPresent", () => {
   it("turns off the rules the plugin has", () => {
-    const rules = { "no-unsafe-enum-assignment": {}, "no-generated-empty-object-type": {} };
+    const rules = {
+      "no-unsafe-enum-assignment": {},
+      "no-generated-empty-object-type": {},
+    };
     expect(
-      offWhenPresent("ts-eslint-js", ["no-unsafe-enum-assignment", "no-generated-empty-object-type"], rules),
+      offWhenPresent(
+        "ts-eslint-js",
+        ["no-unsafe-enum-assignment", "no-generated-empty-object-type"],
+        rules,
+      ),
     ).toEqual({
       "ts-eslint-js/no-unsafe-enum-assignment": "off",
       "ts-eslint-js/no-generated-empty-object-type": "off",
@@ -51,7 +58,11 @@ describe("offWhenPresent", () => {
   it("omits a rule an older plugin release lacks", () => {
     const rules = { "no-generated-empty-object-type": {} };
     expect(
-      offWhenPresent("ts-eslint-js", ["no-unsafe-enum-assignment", "no-generated-empty-object-type"], rules),
+      offWhenPresent(
+        "ts-eslint-js",
+        ["no-unsafe-enum-assignment", "no-generated-empty-object-type"],
+        rules,
+      ),
     ).toEqual({ "ts-eslint-js/no-generated-empty-object-type": "off" });
   });
 });
@@ -88,8 +99,15 @@ describe("strictTypeChecked routing", () => {
 
   it("routes the unported rules to the ts-eslint-js jsPlugin", () => {
     expect(rules["ts-eslint-js/no-useless-constructor"]).toBe("error");
-    // Type-aware, so it cannot run in the plugin runtime.
-    expect(rules["ts-eslint-js/no-generated-empty-object-type"]).toBe("off");
+    // Needs type information, so it is off rather than run blind in the plugin.
+    expect(rules["ts-eslint-js/no-unsafe-enum-assignment"]).toBe("off");
+  });
+
+  it("runs the ported rule natively with no jsPlugin twin", () => {
+    expect(rules["typescript/no-generated-empty-object-type"]).toBe("error");
+    expect(rules).not.toHaveProperty(
+      "ts-eslint-js/no-generated-empty-object-type",
+    );
   });
 
   it("keeps the preset's own severity for no-unnecessary-condition", () => {
@@ -143,8 +161,8 @@ describe("defineOxlint", () => {
     expect(config.rules?.["no-var"]).toBe("off");
     expect(config.rules?.["a/x"]).toBe("warn");
     // Untouched base rules survive.
-    expect(config.rules?.["unicorn/filename-case"]).toEqual(
-      base.rules["unicorn/filename-case"],
+    expect(config.rules?.["import/no-cycle"]).toEqual(
+      base.rules["import/no-cycle"],
     );
     expect(config.env).toEqual({ ...base.env, node: true });
     expect(config.categories).toEqual({ ...base.categories, pedantic: "warn" });

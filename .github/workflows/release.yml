@@ -1,5 +1,5 @@
 # Opens a "Version packages" PR from pending changesets; merging it publishes
-# the config-* packages to npm with provenance (the starter's pnpm
+# the config-* packages to npm with provenance (consumers' pnpm
 # `trustPolicy: no-downgrade` needs attested releases).
 # Publishes over OIDC: each package lists this repo and workflow file as a
 # trusted publisher on npmjs.com, so no npm token is stored.

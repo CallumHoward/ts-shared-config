@@ -33,6 +33,13 @@ export const playwright: OxlintAddon = {
         "playwright/require-top-level-describe": "error",
         "playwright/max-nested-describe": ["error", { max: 1 }],
         "playwright/no-commented-out-tests": "warn",
+        // Suites are `*.spec`; any other middle extension is a mistake. Plain
+        // helper modules (no middle extension) stay legal.
+        "check-file/filename-naming-convention": [
+          "error",
+          { "e2e/**/*.{ts,tsx}": "+([^.])?(.@(spec))" },
+          { ignoreMiddleExtensions: false },
+        ],
       },
     },
   ],
