@@ -9,6 +9,7 @@ import {
   E2E_FILES,
   filenameNamingConvention,
   type OxlintAddon,
+  offWhenPresent,
   ROOT_MIDDLE_EXTENSIONS,
   SRC_MIDDLE_EXTENSIONS,
 } from "./oxlint.ts";
@@ -33,6 +34,25 @@ describe("filenameNamingConvention", () => {
       "src/**/*.{ts,tsx}": "+([^.])?(.@(test|test-d|d|mock|stories))",
       "*.{ts,tsx}": "+([^.])?(.@(config|d|setup))",
     });
+  });
+});
+
+describe("offWhenPresent", () => {
+  it("turns off the rules the plugin has", () => {
+    const rules = { "no-unsafe-enum-assignment": {}, "no-generated-empty-object-type": {} };
+    expect(
+      offWhenPresent("ts-eslint-js", ["no-unsafe-enum-assignment", "no-generated-empty-object-type"], rules),
+    ).toEqual({
+      "ts-eslint-js/no-unsafe-enum-assignment": "off",
+      "ts-eslint-js/no-generated-empty-object-type": "off",
+    });
+  });
+
+  it("omits a rule an older plugin release lacks", () => {
+    const rules = { "no-generated-empty-object-type": {} };
+    expect(
+      offWhenPresent("ts-eslint-js", ["no-unsafe-enum-assignment", "no-generated-empty-object-type"], rules),
+    ).toEqual({ "ts-eslint-js/no-generated-empty-object-type": "off" });
   });
 });
 
