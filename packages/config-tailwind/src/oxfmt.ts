@@ -1,4 +1,4 @@
-import type { OxfmtAddon } from "@callumhoward/config-base/oxfmt";
+import type { OxfmtAddon } from "@wcmj/config-base/oxfmt";
 
 export interface TailwindOxfmtOptions {
   /** Stylesheet whose `@theme` drives Tailwind class sort order. Default "src/styles.css". */

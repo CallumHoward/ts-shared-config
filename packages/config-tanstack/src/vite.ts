@@ -3,7 +3,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { nitro } from "nitro/vite";
 
-import type { ViteAddon } from "@callumhoward/config-base/vite";
+import type { ViteAddon } from "@wcmj/config-base/vite";
 
 /**
  * TanStack Start dev/build plugins (devtools, nitro, start). Skipped under

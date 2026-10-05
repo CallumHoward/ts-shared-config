@@ -1,3 +1,3 @@
-import { definePlaywright } from "@callumhoward/config-playwright/playwright";
+import { definePlaywright } from "@wcmj/config-playwright/playwright";
 
 export default definePlaywright();

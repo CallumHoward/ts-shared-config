@@ -1,9 +1,9 @@
 ---
-"@callumhoward/config-base": minor
-"@callumhoward/config-react": minor
-"@callumhoward/config-tanstack": minor
-"@callumhoward/config-playwright": minor
-"@callumhoward/config-tailwind": minor
+"@wcmj/config-base": minor
+"@wcmj/config-react": minor
+"@wcmj/config-tanstack": minor
+"@wcmj/config-playwright": minor
+"@wcmj/config-tailwind": minor
 ---
 
 Larger, stricter presets: typescript-eslint

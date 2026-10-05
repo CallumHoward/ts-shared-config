@@ -12,7 +12,7 @@
     "fallow": "fallow"
   },
   "devDependencies": {
-    "@callumhoward/config-base": "workspace:*",
+    "@wcmj/config-base": "workspace:*",
     "fallow": "^2.89.0",
     "oxfmt": "^0.58.0",
     "oxlint": "^1.79.0",

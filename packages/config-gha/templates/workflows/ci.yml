@@ -1,4 +1,4 @@
-# CI caller from @callumhoward/config-gha. Copy to .github/workflows/ci.yml.
+# CI caller from @wcmj/config-gha. Copy to .github/workflows/ci.yml.
 #
 # It calls the shared reusable workflow, so updates flow by bumping the @ref —
 # no need to re-copy. It pins the @v1 release tag; use @main only to try

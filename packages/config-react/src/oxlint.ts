@@ -3,11 +3,11 @@ import {
   defineOxlint as defineBaseOxlint,
   E2E_FILES,
   type OxlintAddon,
-} from "@callumhoward/config-base/oxlint";
+} from "@wcmj/config-base/oxlint";
 import {
   rulesFromConfig,
   rulesFromNames,
-} from "@callumhoward/config-base/rules-from-config";
+} from "@wcmj/config-base/rules-from-config";
 import reactHooks from "eslint-plugin-react-hooks";
 import noEffect from "eslint-plugin-react-you-might-not-need-an-effect";
 import testingLibrary from "eslint-plugin-testing-library";

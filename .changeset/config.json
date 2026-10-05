@@ -4,12 +4,12 @@
   "commit": false,
   "fixed": [
     [
-      "@callumhoward/config-base",
-      "@callumhoward/config-react",
-      "@callumhoward/config-tanstack",
-      "@callumhoward/config-tailwind",
-      "@callumhoward/config-playwright",
-      "@callumhoward/config-gha"
+      "@wcmj/config-base",
+      "@wcmj/config-react",
+      "@wcmj/config-tanstack",
+      "@wcmj/config-tailwind",
+      "@wcmj/config-playwright",
+      "@wcmj/config-gha"
     ]
   ],
   "linked": [],

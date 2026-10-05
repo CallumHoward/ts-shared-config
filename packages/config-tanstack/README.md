@@ -1,4 +1,4 @@
-# @callumhoward/config-tanstack
+# @wcmj/config-tanstack
 
 TanStack add-on for [ts-shared-config](https://github.com/CallumHoward/ts-shared-config).
 Assumes the react add-on. Adds the router and query lint plugins (recommended
@@ -7,18 +7,18 @@ sets, plus a `src/routes/**` override) and the vite plugins: TanStack Start
 generation.
 
 ```sh
-pnpm add -D @callumhoward/config-base @callumhoward/config-react @callumhoward/config-tanstack
+pnpm add -D @wcmj/config-base @wcmj/config-react @wcmj/config-tanstack
 ```
 
 ```ts
 // oxlint.config.ts
-import { defineOxlint } from "@callumhoward/config-react/oxlint";
-import { tanstackQuery, tanstackRouter } from "@callumhoward/config-tanstack/oxlint";
+import { defineOxlint } from "@wcmj/config-react/oxlint";
+import { tanstackQuery, tanstackRouter } from "@wcmj/config-tanstack/oxlint";
 export default defineOxlint(tanstackRouter, tanstackQuery);
 
 // vite.config.ts
-import { defineViteConfig } from "@callumhoward/config-react/vite";
-import tanstackVite from "@callumhoward/config-tanstack/vite";
+import { defineViteConfig } from "@wcmj/config-react/vite";
+import tanstackVite from "@wcmj/config-tanstack/vite";
 export default defineViteConfig({ addons: [tanstackVite] });
 ```
 

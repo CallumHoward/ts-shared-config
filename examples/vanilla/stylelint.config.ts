@@ -1,3 +1,3 @@
-import { defineStylelint } from "@callumhoward/config-base/stylelint";
+import { defineStylelint } from "@wcmj/config-base/stylelint";
 
 export default defineStylelint();

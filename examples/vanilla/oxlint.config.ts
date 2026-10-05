@@ -1,3 +1,3 @@
-import { defineOxlint } from "@callumhoward/config-base/oxlint";
+import { defineOxlint } from "@wcmj/config-base/oxlint";
 
 export default defineOxlint();

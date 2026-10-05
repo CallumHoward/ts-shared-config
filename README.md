@@ -14,40 +14,40 @@ LLM-ready.
 
 | Package | Provides |
 | --- | --- |
-| **`@callumhoward/config-base`** | oxlint, oxfmt, stylelint, `tsconfig`, vite/vitest (node); live-inherited `lefthook` + `fallow`; `pnpm-workspace` policy schema; copy-once editor templates (`.editorconfig`, `.vscode`, `.nvmrc`) |
-| `@callumhoward/config-react` | oxlint (react + hooks + a11y + RTL), vite (React plugins **+ React Compiler**), jsdom vitest + setup, `tsconfig` layer |
-| `@callumhoward/config-tanstack` | oxlint router rules + `src/routes` override, TanStack Start vite plugins (assumes react) |
-| `@callumhoward/config-tailwind` | `@tailwindcss/vite`, stylelint at-rules, oxfmt class sorting |
-| `@callumhoward/config-playwright` | `definePlaywright` config + e2e oxlint override |
-| `@callumhoward/config-gha` | reusable CI workflow + thin caller template; scheduled pnpm-update template |
+| **`@wcmj/config-base`** | oxlint, oxfmt, stylelint, `tsconfig`, vite/vitest (node); live-inherited `lefthook` + `fallow`; `pnpm-workspace` policy schema; copy-once editor templates (`.editorconfig`, `.vscode`, `.nvmrc`) |
+| `@wcmj/config-react` | oxlint (react + hooks + a11y + RTL), vite (React plugins **+ React Compiler**), jsdom vitest + setup, `tsconfig` layer |
+| `@wcmj/config-tanstack` | oxlint router rules + `src/routes` override, TanStack Start vite plugins (assumes react) |
+| `@wcmj/config-tailwind` | `@tailwindcss/vite`, stylelint at-rules, oxfmt class sorting |
+| `@wcmj/config-playwright` | `definePlaywright` config + e2e oxlint override |
+| `@wcmj/config-gha` | reusable CI workflow + thin caller template; scheduled pnpm-update template |
 
 ## Base usage
 
 ```sh
-pnpm add -D @callumhoward/config-base oxlint oxlint-tsgolint oxfmt stylelint vitest vite typescript lefthook fallow
+pnpm add -D @wcmj/config-base oxlint oxlint-tsgolint oxfmt stylelint vitest vite typescript lefthook fallow
 ```
 
 ```ts
 // oxlint.config.ts
-import { defineOxlint } from "@callumhoward/config-base/oxlint";
+import { defineOxlint } from "@wcmj/config-base/oxlint";
 export default defineOxlint();
 
 // oxfmt.config.ts
-import { defineOxfmt } from "@callumhoward/config-base/oxfmt";
+import { defineOxfmt } from "@wcmj/config-base/oxfmt";
 export default defineOxfmt();
 
 // stylelint.config.ts
-import { defineStylelint } from "@callumhoward/config-base/stylelint";
+import { defineStylelint } from "@wcmj/config-base/stylelint";
 export default defineStylelint();
 
 // vite.config.ts
-import { defineViteConfig } from "@callumhoward/config-base/vite";
+import { defineViteConfig } from "@wcmj/config-base/vite";
 export default defineViteConfig();
 ```
 
 ```jsonc
 // tsconfig.json
-{ "extends": "@callumhoward/config-base/tsconfig" }
+{ "extends": "@wcmj/config-base/tsconfig" }
 ```
 
 ## Adding an add-on
@@ -58,12 +58,12 @@ tailwind:
 
 ```ts
 // oxlint.config.ts
-import { defineOxlint } from "@callumhoward/config-react/oxlint";
+import { defineOxlint } from "@wcmj/config-react/oxlint";
 export default defineOxlint();
 
 // vite.config.ts
-import { defineViteConfig } from "@callumhoward/config-react/vite";
-import tailwind from "@callumhoward/config-tailwind/vite";
+import { defineViteConfig } from "@wcmj/config-react/vite";
+import tailwind from "@wcmj/config-tailwind/vite";
 export default defineViteConfig({ addons: [tailwind] });
 ```
 
@@ -72,7 +72,7 @@ installed, since its vitest setup imports both.
 
 ```jsonc
 // tsconfig.json — extends takes an array
-{ "extends": ["@callumhoward/config-base/tsconfig", "@callumhoward/config-react/tsconfig"] }
+{ "extends": ["@wcmj/config-base/tsconfig", "@wcmj/config-react/tsconfig"] }
 ```
 
 React Compiler is on by default; opt out with `defineViteConfig({ reactCompiler: false })` from `config-react/vite`.
@@ -87,18 +87,18 @@ into `node_modules`), so updates flow with the package version:
 
 ```yaml
 # lefthook.yml
-extends: [node_modules/@callumhoward/config-base/lefthook.yml]
+extends: [node_modules/@wcmj/config-base/lefthook.yml]
 ```
 ```jsonc
 // .fallowrc.json
-{ "extends": ["./node_modules/@callumhoward/config-base/fallow.json"] }
+{ "extends": ["./node_modules/@wcmj/config-base/fallow.json"] }
 ```
 
 CI is a **reusable workflow**: your `.github/workflows/ci.yml` calls
 `callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml@v1` (see
 [`config-gha`](./packages/config-gha)). It includes a CI-only check that your
 `pnpm-workspace.yaml` meets the supply-chain policy
-(`@callumhoward/config-base/schema/pnpm-workspace.json`).
+(`@wcmj/config-base/schema/pnpm-workspace.json`).
 
 The only true **copy-once** files (no inheritance mechanism) are
 `pnpm-workspace.yaml`, `.editorconfig`, `.vscode/*`, and `.nvmrc` — copy them

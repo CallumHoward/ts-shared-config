@@ -1,7 +1,7 @@
 # Opens a "Version packages" PR from pending changesets; merging it publishes
 # the config-* packages to npm with provenance (the starter's pnpm
 # `trustPolicy: no-downgrade` needs attested releases).
-# Requires an NPM_TOKEN repository secret with publish rights to @callumhoward.
+# Requires an NPM_TOKEN repository secret with publish rights to @wcmj.
 name: Release
 
 on:

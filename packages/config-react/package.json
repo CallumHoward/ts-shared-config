@@ -1,6 +1,15 @@
 {
-  "name": "@callumhoward/config-react",
+  "name": "@wcmj/config-react",
   "version": "0.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CallumHoward/ts-shared-config.git",
+    "directory": "packages/config-react"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist",
     "tsconfig.react.json",
@@ -40,7 +49,7 @@
     "prepare": "pnpm run build"
   },
   "dependencies": {
-    "@callumhoward/config-base": "workspace:*",
+    "@wcmj/config-base": "workspace:*",
     "@vitejs/plugin-react": "^6.1.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-you-might-not-need-an-effect": "^1.0.0",

@@ -1,4 +1,4 @@
-# @callumhoward/config-base
+# @wcmj/config-base
 
 Vanilla-TS base of [ts-shared-config](https://github.com/CallumHoward/ts-shared-config):
 oxlint, oxfmt, stylelint, a shared `tsconfig`, vite/vitest (node env),
@@ -6,12 +6,12 @@ live-inherited `lefthook` + `fallow`, a `pnpm-workspace` policy schema, and
 copy-once editor templates.
 
 ```sh
-pnpm add -D @callumhoward/config-base oxlint oxlint-tsgolint oxfmt stylelint vitest vite typescript lefthook fallow
+pnpm add -D @wcmj/config-base oxlint oxlint-tsgolint oxfmt stylelint vitest vite typescript lefthook fallow
 ```
 
 ```ts
 // oxlint.config.ts
-import { defineOxlint } from "@callumhoward/config-base/oxlint";
+import { defineOxlint } from "@wcmj/config-base/oxlint";
 export default defineOxlint();
 ```
 
@@ -19,19 +19,19 @@ Composers: `defineOxlint` / `defineOxfmt` / `defineStylelint` / `defineViteConfi
 (each accepts add-on contributions; React projects import the oxlint and vite
 composers from `config-react`, which layers its add-on first). Add-on authors
 get `bundledPlugins(import.meta.url)` (jsPlugins resolved to absolute paths)
-and `@callumhoward/config-base/rules-from-config`, which subscribes to an
+and `@wcmj/config-base/rules-from-config`, which subscribes to an
 upstream plugin's recommended set and routes each rule to oxlint's native
 implementation or the bundled jsPlugin. `tsconfig` via
-`{ "extends": "@callumhoward/config-base/tsconfig" }`. Inherit `lefthook` and
+`{ "extends": "@wcmj/config-base/tsconfig" }`. Inherit `lefthook` and
 `fallow` live:
 
 ```yaml
 # lefthook.yml
-extends: [node_modules/@callumhoward/config-base/lefthook.yml]
+extends: [node_modules/@wcmj/config-base/lefthook.yml]
 ```
 ```jsonc
 // .fallowrc.json
-{ "extends": ["./node_modules/@callumhoward/config-base/fallow.json"] }
+{ "extends": ["./node_modules/@wcmj/config-base/fallow.json"] }
 ```
 
 `schema/pnpm-workspace.json` asserts the supply-chain baseline

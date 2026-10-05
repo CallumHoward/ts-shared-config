@@ -1,4 +1,4 @@
-import { defineStylelint } from "@callumhoward/config-base/stylelint";
-import tailwind from "@callumhoward/config-tailwind/stylelint";
+import { defineStylelint } from "@wcmj/config-base/stylelint";
+import tailwind from "@wcmj/config-tailwind/stylelint";
 
 export default defineStylelint(tailwind);

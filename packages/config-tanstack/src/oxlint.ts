@@ -1,8 +1,8 @@
 import {
   bundledPlugins,
   type OxlintAddon,
-} from "@callumhoward/config-base/oxlint";
-import { rulesFromConfig } from "@callumhoward/config-base/rules-from-config";
+} from "@wcmj/config-base/oxlint";
+import { rulesFromConfig } from "@wcmj/config-base/rules-from-config";
 import queryPlugin from "@tanstack/eslint-plugin-query";
 import routerPlugin from "@tanstack/eslint-plugin-router";
 

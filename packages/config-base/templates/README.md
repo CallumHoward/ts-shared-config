@@ -17,11 +17,11 @@ they're consumed live instead of copied (see the config-base README):
 ```yaml
 # lefthook.yml
 extends:
-  - node_modules/@callumhoward/config-base/lefthook.yml
+  - node_modules/@wcmj/config-base/lefthook.yml
 ```
 ```jsonc
 // .fallowrc.json
-{ "extends": ["./node_modules/@callumhoward/config-base/fallow.json"] }
+{ "extends": ["./node_modules/@wcmj/config-base/fallow.json"] }
 ```
 
 The `.vscode` settings follow the Oxc extension's recommended fix/format-on-save

@@ -1,8 +1,8 @@
 import {
   defineOxlint,
   E2E_FILES,
-} from "@callumhoward/config-base/oxlint";
-import { lintFixturesByFile } from "@callumhoward/config-utilities/oxlint-fixtures";
+} from "@wcmj/config-base/oxlint";
+import { lintFixturesByFile } from "@wcmj/config-utilities/oxlint-fixtures";
 import { beforeAll, describe, expect, it } from "vitest";
 
 import { playwright } from "./oxlint.ts";

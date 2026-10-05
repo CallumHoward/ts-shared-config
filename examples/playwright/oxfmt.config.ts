@@ -1,3 +1,3 @@
-import { defineOxfmt } from "@callumhoward/config-base/oxfmt";
+import { defineOxfmt } from "@wcmj/config-base/oxfmt";
 
 export default defineOxfmt();

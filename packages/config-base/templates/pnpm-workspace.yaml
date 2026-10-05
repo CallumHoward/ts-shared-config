@@ -1,4 +1,4 @@
-# Supply-chain + build baseline from @callumhoward/config-base.
+# Supply-chain + build baseline from @wcmj/config-base.
 # pnpm has no `extends` for this file, so copy these keys into your own
 # pnpm-workspace.yaml once (re-copy to pick up updates).
 

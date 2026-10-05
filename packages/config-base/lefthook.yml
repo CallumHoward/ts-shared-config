@@ -1,6 +1,6 @@
 # Consumers extend this from their own lefthook.yml:
 #   extends:
-#     - node_modules/@callumhoward/config-base/lefthook.yml
+#     - node_modules/@wcmj/config-base/lefthook.yml
 #
 # oxfmt is the only job that writes files (jobs run in parallel, so a second
 # writer would race it). Linters run check-only and fail the commit — run
