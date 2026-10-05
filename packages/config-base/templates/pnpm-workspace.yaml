@@ -9,13 +9,3 @@ trustPolicy: no-downgrade
 
 allowBuilds:
   lefthook: true
-
-# stylelint-use-nesting and stylelint-value-no-unknown-custom-properties import
-# postcss without declaring it; pnpm's isolated layout needs it supplied.
-packageExtensions:
-  stylelint-use-nesting@*:
-    dependencies:
-      postcss: ^8.5.15
-  stylelint-value-no-unknown-custom-properties@*:
-    dependencies:
-      postcss: ^8.5.15
