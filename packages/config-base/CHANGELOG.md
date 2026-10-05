@@ -1,5 +1,11 @@
 # @wcmj/config-base
 
+## 0.4.1
+
+### Patch Changes
+
+- db346ea: The CI caller template now pins the reusable workflow to a release commit instead of the mutable `v1` tag.
+
 ## 0.4.0
 
 ### Minor Changes
