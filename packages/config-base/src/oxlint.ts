@@ -42,24 +42,39 @@ export interface OxlintAddon {
   env?: Environment;
 }
 
-/**
- * typescript-eslint rules oxlint can only run as a jsPlugin, where they have no
- * type information. They are turned off rather than run blind.
- */
-const typeInformationRules = ["no-unsafe-enum-assignment"];
+type PluginRules = Record<
+  string,
+  { meta?: { docs?: { requiresTypeChecking?: boolean } } }
+>;
 
-// Turns off `prefix/name` for each name the plugin's rules map has.
-export function offWhenPresent(
+/**
+ * Turns off every `prefix/` rule that needs type information. The jsPlugin
+ * runtime has none, so such a rule would crash on every file.
+ */
+export function offWhenTypeAware(
   prefix: string,
-  names: readonly string[],
-  pluginRules: Record<string, unknown>,
+  rules: Record<string, unknown>,
+  pluginRules: PluginRules,
 ): Record<string, "off"> {
   return Object.fromEntries(
-    names
-      .filter((name) => name in pluginRules)
-      .map((name) => [`${prefix}/${name}`, "off"]),
+    Object.keys(rules)
+      .filter((key) => key.startsWith(`${prefix}/`))
+      .filter(
+        (key) =>
+          pluginRules[key.slice(prefix.length + 1)]?.meta?.docs
+            ?.requiresTypeChecking === true,
+      )
+      .map((key) => [key, "off"] as const),
   );
 }
+
+const typescriptEslintRules = rulesFromConfig({
+  plugin: typescriptEslint,
+  sourcePrefix: "@typescript-eslint",
+  nativePrefix: "typescript",
+  jsPrefix: "ts-eslint-js",
+  config: "flat/strict-type-checked",
+});
 
 /** `no-restricted-imports` pattern for the unsupported `@/` src alias. */
 export const AT_ALIAS_PATTERN = {
@@ -147,19 +162,10 @@ export const base = {
     "eslint-comments/no-unused-enable": "error",
     // typescript-eslint's strictTypeChecked set. Oxlint ports nearly all of it
     // natively (type-aware rules via tsgolint); the rest run as a jsPlugin.
-    ...rulesFromConfig({
-      plugin: typescriptEslint,
-      sourcePrefix: "@typescript-eslint",
-      nativePrefix: "typescript",
-      jsPrefix: "ts-eslint-js",
-      config: "flat/strict-type-checked",
-    }),
-    // Need type information, which the jsPlugin runtime cannot provide. Only
-    // those the installed plugin has: oxlint rejects a rule it can't find, even
-    // when off, and typescript-eslint adds rules between minors.
-    ...offWhenPresent(
+    ...typescriptEslintRules,
+    ...offWhenTypeAware(
       "ts-eslint-js",
-      typeInformationRules,
+      typescriptEslintRules,
       typescriptEslint.rules,
     ),
     // The native core rule already covers it.
