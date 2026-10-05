@@ -6,7 +6,7 @@ live-inherited `lefthook` + `fallow`, a `pnpm-workspace` policy schema, and
 copy-once editor templates.
 
 ```sh
-pnpm add -D @wcmj/config-base oxlint oxlint-tsgolint oxfmt stylelint vitest vite typescript lefthook fallow
+pnpm add -D @wcmj/config-base oxlint oxlint-tsgolint oxfmt stylelint vitest @vitest/coverage-v8 vite typescript lefthook fallow
 ```
 
 ```ts
