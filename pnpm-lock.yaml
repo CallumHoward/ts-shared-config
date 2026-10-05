@@ -197,7 +197,7 @@ importers:
         specifier: ^64.0.0
         version: 64.0.0(eslint@10.5.0(jiti@2.7.0))
       fallow:
-        specifier: ^2.89.0
+        specifier: ^2.89.0 || ^3.0.0
         version: 2.102.0
       lefthook:
         specifier: ^2.1.9
