@@ -437,6 +437,9 @@ importers:
       oxlint:
         specifier: ^1.79.0
         version: 1.86.0(oxlint-tsgolint@7.0.2003)
+      oxlint-tsgolint:
+        specifier: ^7.0.2001
+        version: 7.0.2003
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
