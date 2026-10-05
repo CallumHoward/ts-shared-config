@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://callumhoward.dev/schema/pnpm-workspace.json",
+  "$id": "https://raw.githubusercontent.com/CallumHoward/ts-shared-config/main/packages/config-base/schema/pnpm-workspace.json",
   "title": "pnpm-workspace supply-chain policy",
   "description": "Asserts the @wcmj/config-base supply-chain baseline. Other keys (packages, allowBuilds, catalogs, …) are unconstrained.",
   "type": "object",
