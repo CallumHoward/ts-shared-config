@@ -46,17 +46,8 @@ jobs:
 
       - uses: pnpm/action-setup@v6
 
-      - name: Locate pnpm store
-        shell: bash
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"
-
-      - uses: actions/cache@v5
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
+      # No pnpm store cache: a cold install costs about what restoring and
+      # saving the store does.
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -96,18 +87,28 @@ jobs:
         if: ${{ inputs.run-build }}
         run: pnpm build
 
-      - name: Cache Playwright browsers
+      - name: Resolve Playwright version
+        # The browser cache key must match the exact Playwright build it
+        # belongs to.
         if: ${{ inputs.run-e2e }}
-        uses: actions/cache@v5
+        id: playwright-version
+        run: echo "version=$(pnpm exec playwright --version | cut -d' ' -f2)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Playwright browsers
+        if: ${{ inputs.run-e2e }}
+        id: playwright-cache
+        uses: actions/cache/restore@v5
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
+          # Deliberately no restore-keys: another Playwright version's browser
+          # build can't be driven, so a partial hit is worse than a miss.
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
 
+      # No --with-deps: those libraries ship with ubuntu-latest, and apt can
+      # wedge on dpkg's lock.
       - name: Install Playwright Chromium
-        if: ${{ inputs.run-e2e }}
-        run: pnpm exec playwright install --with-deps chromium
+        if: ${{ inputs.run-e2e && steps.playwright-cache.outputs.cache-hit != 'true' }}
+        run: pnpm exec playwright install chromium
 
       - name: E2E
         if: ${{ inputs.run-e2e }}
@@ -119,3 +120,12 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+      # Main-only and last, so the save follows a green job; a PR's own entries
+      # are readable only by that PR.
+      - name: Save Playwright browsers
+        if: ${{ inputs.run-e2e && github.ref_name == github.event.repository.default_branch && steps.playwright-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}

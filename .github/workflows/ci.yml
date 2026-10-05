@@ -20,17 +20,8 @@ jobs:
 
       - uses: pnpm/action-setup@v6
 
-      - name: Locate pnpm store
-        shell: bash
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"
-
-      - uses: actions/cache@v5
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
+      # No pnpm store cache: a cold install costs about what restoring and
+      # saving the store does.
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
