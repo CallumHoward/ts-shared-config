@@ -17,3 +17,5 @@ jobs:
       run-css: true # config-base ships stylelint
       run-build: false # set true for app tiers (config-react / config-tanstack)
       run-e2e: false # set true with config-playwright
+      check-peers: false # set true on pnpm 11+ to fail on unmet peers
+      check-dedupe: false # set true to fail on avoidable duplicate resolutions

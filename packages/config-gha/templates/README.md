@@ -16,6 +16,8 @@ the latest release; use `@main` only to try unreleased changes. Toggle tiers via
 | `run-css` | `true` | `pnpm lint:css` (stylelint / Tailwind) |
 | `run-build` | `false` | `pnpm build` (app tiers — react / tanstack) |
 | `run-e2e` | `false` | install Chromium + `pnpm test:e2e` (config-playwright) |
+| `check-peers` | `false` | `pnpm peers check` (pnpm 11+) so unmet peers fail CI |
+| `check-dedupe` | `false` | `pnpm dedupe --check` so avoidable duplicate resolutions fail CI |
 | `check-pnpm-policy` | `true` | validate `pnpm-workspace.yaml` against config-base's supply-chain schema |
 | `diff-coverage-threshold` | `80` | min % coverage on changed lines |
 
@@ -24,4 +26,4 @@ defaults): `check`, `lint:ci`, `lint:css`, `format:check`, `fallow`, `test:cov`,
 and — per tier — `build` and `test:e2e`. `test:cov` must write
 `coverage/lcov.info` at the repo root (config-base's vitest preset emits lcov
 with repo-relative paths), which the diff-coverage step reads. `update-pnpm.yml`
-is a standalone scheduled workflow (copy-once).
+is a standalone scheduled workflow (copy-once); see its header for the GitHub App it needs.
