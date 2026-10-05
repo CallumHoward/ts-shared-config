@@ -158,6 +158,18 @@ export const base = {
     ),
     // The native core rule already covers it.
     "ts-eslint-js/no-unused-vars": "off",
+    // `#/` (Node subpath import) is the src alias; `@/` is not configured.
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [
+          {
+            regex: "^@/",
+            message: "Use the '#/' alias for src imports.",
+          },
+        ],
+      },
+    ],
     "typescript/switch-exhaustiveness-check": "error",
     "typescript/no-unnecessary-condition": "warn",
     // A concise arrow like `() => setOpen(true)` is idiomatic; braces add noise.
