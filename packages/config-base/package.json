@@ -35,7 +35,8 @@
     "./fallow": "./fallow.json",
     "./package.json": "./package.json",
     "./lefthook.yml": "./lefthook.yml",
-    "./schema/pnpm-workspace": "./schema/pnpm-workspace.json"
+    "./schema/pnpm-workspace": "./schema/pnpm-workspace.json",
+    "./schema/pnpm-workspace.json": "./schema/pnpm-workspace.json"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

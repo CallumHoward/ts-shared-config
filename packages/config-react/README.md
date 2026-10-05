@@ -6,7 +6,7 @@ Layers on top of `config-base`: oxlint (react + hooks + jsx-a11y + RTL), vite
 environment with a bundled setup (jest-dom + vitest-axe), and a `tsconfig` layer.
 
 ```sh
-pnpm add -D @callumhoward/config-base @callumhoward/config-react react react-dom jsdom
+pnpm add -D @callumhoward/config-base @callumhoward/config-react oxlint oxlint-tsgolint vitest vite typescript react react-dom jsdom @testing-library/jest-dom @testing-library/react
 ```
 
 ```ts

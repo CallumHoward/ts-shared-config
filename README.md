@@ -24,7 +24,7 @@ LLM-ready.
 ## Base usage
 
 ```sh
-pnpm add -D @callumhoward/config-base oxlint oxfmt stylelint vitest vite typescript
+pnpm add -D @callumhoward/config-base oxlint oxlint-tsgolint oxfmt stylelint vitest vite typescript lefthook fallow
 ```
 
 ```ts
@@ -52,27 +52,30 @@ export default defineViteConfig();
 
 ## Adding an add-on
 
-Add-ons are extra arguments to the same composers — e.g. base + react + tailwind:
+React projects import the composers from `config-react`, which layers its own
+rules and plugins first; further add-ons are extra arguments — e.g. react +
+tailwind:
 
 ```ts
 // oxlint.config.ts
-import { defineOxlint } from "@callumhoward/config-base/oxlint";
-import react from "@callumhoward/config-react/oxlint";
-export default defineOxlint(react);
+import { defineOxlint } from "@callumhoward/config-react/oxlint";
+export default defineOxlint();
 
 // vite.config.ts
-import { defineViteConfig } from "@callumhoward/config-base/vite";
-import react from "@callumhoward/config-react/vite";
+import { defineViteConfig } from "@callumhoward/config-react/vite";
 import tailwind from "@callumhoward/config-tailwind/vite";
-export default defineViteConfig({ addons: [tailwind, react] });
+export default defineViteConfig({ addons: [tailwind] });
 ```
+
+The React preset needs `@testing-library/jest-dom` and `@testing-library/react`
+installed, since its vitest setup imports both.
 
 ```jsonc
 // tsconfig.json — extends takes an array
 { "extends": ["@callumhoward/config-base/tsconfig", "@callumhoward/config-react/tsconfig"] }
 ```
 
-React Compiler is on by default; opt out with `reactVite({ reactCompiler: false })`.
+React Compiler is on by default; opt out with `defineViteConfig({ reactCompiler: false })` from `config-react/vite`.
 
 See [`examples/`](./examples) for working consumers of each tier (`vanilla`,
 `react`, `tanstack`, `playwright`).

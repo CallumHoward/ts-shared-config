@@ -140,22 +140,21 @@ packages/
 ```
 
 ```ts
-// oxlint.config.ts — base helper deep-merges add-on contributions; base is implicit
-import { defineOxlint } from "@callumhoward/config-base/oxlint";
-import react from "@callumhoward/config-react/oxlint";
-import tanstack from "@callumhoward/config-tanstack/oxlint";
+// oxlint.config.ts — the react preset layers its rules first, then the add-ons in
+// argument order (later wins); base is implicit
+import { defineOxlint } from "@callumhoward/config-react/oxlint";
+import { tanstackQuery, tanstackRouter } from "@callumhoward/config-tanstack/oxlint";
 import playwright from "@callumhoward/config-playwright/oxlint";
-export default defineOxlint(react, tanstack, playwright);
+export default defineOxlint(tanstackRouter, tanstackQuery, playwright);
 ```
 
 ```ts
 // vite.config.ts — helper enforces canonical plugin order regardless of arg order;
-// React Compiler is on by default when the react add-on is present.
-import { defineViteConfig } from "@callumhoward/config-base/vite";
-import react from "@callumhoward/config-react/vite";
+// the react preset turns the React Compiler on by default.
+import { defineViteConfig } from "@callumhoward/config-react/vite";
 import tanstack from "@callumhoward/config-tanstack/vite";
 import tailwind from "@callumhoward/config-tailwind/vite";
-export default defineViteConfig({ addons: [react, tanstack, tailwind] });
+export default defineViteConfig({ addons: [tailwind, tanstack] });
 ```
 
 `lefthook` and `fallow` are inherited live via their own `extends` (file paths
