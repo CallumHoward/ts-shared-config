@@ -2,7 +2,7 @@
 # Call it from your own .github/workflows/ci.yml:
 #   jobs:
 #     ci:
-#       uses: callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml@v1
+#       uses: callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml@<commit of a release tag> # v1
 #       with: { run-build: true, run-e2e: true }
 name: CI (reusable)
 

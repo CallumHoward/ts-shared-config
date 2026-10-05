@@ -1,8 +1,10 @@
 # CI caller from @wcmj/config-gha. Copy to .github/workflows/ci.yml.
 #
-# It calls the shared reusable workflow, so updates flow by bumping the @ref —
-# no need to re-copy. It pins the @v1 release tag; use @main only to try
-# unreleased changes. Toggle the tier inputs for the add-ons you use.
+# It calls the shared reusable workflow, so you don't re-copy CI logic. Pin it
+# to the commit a release tag points at (the moving v1 tag is mutable); keep the
+# `# v1` comment so Dependabot or Renovate can bump it. Find the commit with:
+#   git ls-remote https://github.com/callumhoward/ts-shared-config refs/tags/v1
+# Toggle the tier inputs for the add-ons you use.
 name: CI
 
 on:
@@ -12,7 +14,7 @@ on:
 
 jobs:
   ci:
-    uses: callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml@v1
+    uses: callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml@dccb6f3467eeb2ca80fc6327c66fb7c920a36836 # v1
     with:
       run-css: true # config-base ships stylelint
       run-build: false # set true for app tiers (config-react / config-tanstack)

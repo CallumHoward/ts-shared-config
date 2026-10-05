@@ -95,7 +95,7 @@ extends: [node_modules/@wcmj/config-base/lefthook.yml]
 ```
 
 CI is a **reusable workflow**: your `.github/workflows/ci.yml` calls
-`callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml@v1` (see
+`callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml`, pinned to a release commit (see
 [`config-gha`](./packages/config-gha)). It includes a CI-only check that your
 `pnpm-workspace.yaml` meets the supply-chain policy
 (`@wcmj/config-base/schema/pnpm-workspace.json`).

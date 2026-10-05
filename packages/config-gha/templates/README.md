@@ -7,8 +7,10 @@
 
 `ci.yml` is a **thin caller** for the shared reusable workflow
 (`callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml`), so CI logic
-updates flow by bumping the `@ref` — you don't re-copy it. The `@v1` tag follows
-the latest release; use `@main` only to try unreleased changes. Toggle tiers via inputs:
+you don't re-copy CI logic. The template pins the commit a release tag points at,
+with a `# v1` comment that Dependabot or Renovate keep current; the `v1` tag itself
+is mutable, so don't reference it directly. Use `@main` only to try unreleased
+changes. Toggle tiers via inputs:
 
 | Input | Default | Use |
 | --- | --- | --- |
