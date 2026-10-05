@@ -1,5 +1,18 @@
 # @wcmj/config-playwright
 
+## 0.4.0
+
+### Minor Changes
+
+- 603c1f5: Add `check-peers` and `check-dedupe` inputs to the reusable CI workflow, stop persisting checkout credentials, and bump the pinned actions.
+
+### Patch Changes
+
+- 1901cf2: Make the tailwind fallow preset carry config-react's `ignoreDependencies`, since extending several presets keeps only the last one's list.
+- Updated dependencies [603c1f5]
+- Updated dependencies [1901cf2]
+  - @wcmj/config-base@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes
