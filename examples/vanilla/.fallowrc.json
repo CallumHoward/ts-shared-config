@@ -1,0 +1,4 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "extends": ["./node_modules/@callumhoward/config-base/fallow.json"]
+}

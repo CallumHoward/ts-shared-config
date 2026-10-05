@@ -1,0 +1,50 @@
+{
+  "name": "@callumhoward/config-playwright",
+  "version": "0.0.0",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    "./oxlint": {
+      "types": "./dist/oxlint.d.ts",
+      "default": "./dist/oxlint.js"
+    },
+    "./package.json": "./package.json",
+    "./playwright": {
+      "types": "./dist/playwright.d.ts",
+      "default": "./dist/playwright.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "check": "tsc --noEmit",
+    "lint": "pnpm run lint:ts",
+    "lint:ts": "oxlint --type-aware --report-unused-disable-directives-severity=error",
+    "lint:ci": "oxlint --type-aware --report-unused-disable-directives-severity=error --format=github",
+    "lint:fix": "oxlint --type-aware --report-unused-disable-directives-severity=error --fix",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "prepare": "pnpm run build"
+  },
+  "dependencies": {
+    "@callumhoward/config-base": "workspace:*",
+    "eslint-plugin-playwright": "^2.10.4"
+  },
+  "devDependencies": {
+    "@callumhoward/config-utilities": "workspace:*",
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^24.13.2",
+    "@vitest/coverage-v8": "^5.0.0",
+    "oxlint": "^1.79.0",
+    "oxlint-tsgolint": "^7.0.2001",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.0",
+    "vitest": "^5.0.0"
+  },
+  "peerDependencies": {
+    "oxlint": "^1.79.0",
+    "typescript": ">=6",
+    "@playwright/test": "^1.61.1"
+  }
+}

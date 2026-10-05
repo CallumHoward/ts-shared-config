@@ -1,0 +1,29 @@
+{
+  "name": "@example/tanstack",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint --type-aware",
+    "format:check": "oxfmt --check .",
+    "check": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "^1.170.41",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@callumhoward/config-base": "workspace:*",
+    "@callumhoward/config-react": "workspace:*",
+    "@callumhoward/config-tanstack": "workspace:*",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "oxfmt": "^0.58.0",
+    "oxlint": "^1.79.0",
+    "oxlint-tsgolint": "^7.0.2001",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.0",
+    "vitest": "^5.0.0"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "_comment": "@callumhoward/config-react — a pure add-on layer, not self-extending base, so consumers can compose several add-ons over one base: \"extends\": [\"@callumhoward/config-base/tsconfig\", \"@callumhoward/config-react/tsconfig\"]. If this layer re-extended base, a later add-on re-applying base would clobber this layer's lib/jsx overrides.",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2025", "DOM", "DOM.Iterable"]
+  }
+}

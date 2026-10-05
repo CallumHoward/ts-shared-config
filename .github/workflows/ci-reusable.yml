@@ -1,0 +1,121 @@
+# Reusable CI for @callumhoward/config-* consumers.
+# Call it from your own .github/workflows/ci.yml:
+#   jobs:
+#     ci:
+#       uses: callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml@v1
+#       with: { run-build: true, run-e2e: true }
+name: CI (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      node-version-file:
+        type: string
+        default: .nvmrc
+      run-css:
+        description: Run `pnpm lint:css` (keep for stylelint/Tailwind consumers).
+        type: boolean
+        default: true
+      run-build:
+        description: Run `pnpm build` (app tiers — react/tanstack).
+        type: boolean
+        default: false
+      run-e2e:
+        description: Install Chromium and run `pnpm test:e2e` (config-playwright).
+        type: boolean
+        default: false
+      check-pnpm-policy:
+        description: Validate pnpm-workspace.yaml against the config-base supply-chain schema.
+        type: boolean
+        default: true
+      diff-coverage-threshold:
+        type: number
+        default: 80
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: ${{ inputs.node-version-file }}
+
+      - uses: pnpm/action-setup@v6
+
+      - name: Locate pnpm store
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"
+
+      - uses: actions/cache@v5
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: pnpm-workspace policy
+        if: ${{ inputs.check-pnpm-policy }}
+        run: >-
+          pipx run check-jsonschema
+          --schemafile node_modules/@callumhoward/config-base/schema/pnpm-workspace.json
+          pnpm-workspace.yaml
+
+      - name: Typecheck
+        run: pnpm check
+
+      - name: Lint
+        run: pnpm lint:ci
+
+      - name: Lint CSS
+        if: ${{ inputs.run-css }}
+        run: pnpm lint:css
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Fallow
+        run: pnpm fallow
+
+      - name: Test
+        run: pnpm test:cov
+
+      - name: Diff coverage
+        run: |
+          pipx run diff-cover coverage/lcov.info \
+            --compare-branch origin/${{ github.base_ref || 'main' }} \
+            --fail-under ${{ inputs.diff-coverage-threshold }}
+
+      - name: Build
+        if: ${{ inputs.run-build }}
+        run: pnpm build
+
+      - name: Cache Playwright browsers
+        if: ${{ inputs.run-e2e }}
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright Chromium
+        if: ${{ inputs.run-e2e }}
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: E2E
+        if: ${{ inputs.run-e2e }}
+        run: pnpm test:e2e
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ inputs.run-e2e && failure() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

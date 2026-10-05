@@ -1,0 +1,8 @@
+packages:
+  - "packages/*"
+  - "examples/*"
+# lefthook is a config-base peerDependency (auto-installed), but this repo
+# doesn't use git hooks itself — so don't run its postinstall here. Consumers
+# set this to true (see config-base's pnpm-workspace template).
+allowBuilds:
+  lefthook: false

@@ -1,0 +1,74 @@
+{
+  "name": "@callumhoward/config-react",
+  "version": "0.0.0",
+  "files": [
+    "dist",
+    "tsconfig.react.json",
+    "fallow.json"
+  ],
+  "type": "module",
+  "exports": {
+    "./oxlint": {
+      "types": "./dist/oxlint.d.ts",
+      "default": "./dist/oxlint.js"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "default": "./dist/vite.js"
+    },
+    "./vitest-setup": {
+      "types": "./dist/vitest-setup.d.ts",
+      "default": "./dist/vitest-setup.js"
+    },
+    "./axe-config": {
+      "types": "./dist/axe-config.d.ts",
+      "default": "./dist/axe-config.js"
+    },
+    "./tsconfig": "./tsconfig.react.json",
+    "./fallow": "./fallow.json",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "check": "tsc --noEmit",
+    "lint": "pnpm run lint:ts",
+    "lint:ts": "oxlint --type-aware --report-unused-disable-directives-severity=error",
+    "lint:ci": "oxlint --type-aware --report-unused-disable-directives-severity=error --format=github",
+    "lint:fix": "oxlint --type-aware --report-unused-disable-directives-severity=error --fix",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "prepare": "pnpm run build"
+  },
+  "dependencies": {
+    "@callumhoward/config-base": "workspace:*",
+    "@vitejs/plugin-react": "^6.1.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-you-might-not-need-an-effect": "^1.0.0",
+    "eslint-plugin-testing-library": "^7.16.2",
+    "oxc-transform-react": "^0.145.0",
+    "vitest-axe": "^0.1.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@vitest/coverage-v8": "^5.0.0",
+    "oxlint": "^1.79.0",
+    "oxlint-tsgolint": "^7.0.2001",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.0",
+    "vitest": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.0.0",
+    "jsdom": ">=27",
+    "oxlint": "^1.79.0",
+    "react": ">=19",
+    "react-dom": ">=19",
+    "typescript": ">=6",
+    "vite": "^8.0.0",
+    "vitest": "^5.0.0"
+  }
+}

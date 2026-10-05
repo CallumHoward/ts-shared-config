@@ -1,0 +1,23 @@
+# Consumers extend this from their own lefthook.yml:
+#   extends:
+#     - node_modules/@callumhoward/config-base/lefthook.yml
+#
+# oxfmt is the only job that writes files (jobs run in parallel, so a second
+# writer would race it). Linters run check-only and fail the commit — run
+# `pnpm lint:fix` to fix deliberately, not silently on commit.
+pre-commit:
+  parallel: true
+  jobs:
+    # --type-aware so type-aware rules (e.g. no-unsafe-assignment) fail here,
+    # not only in CI's lint:ci.
+    - run: pnpm exec oxlint --type-aware --quiet '{staged_files}'
+      glob: "*.{ts,tsx,js,jsx,mjs,cjs}"
+    - run: pnpm exec stylelint '{staged_files}'
+      glob: "*.css"
+    - run: pnpm exec oxfmt --no-error-on-unmatched-pattern '{staged_files}'
+      glob: "*.{ts,tsx,js,jsx,json,jsonc,css,md,yaml,yml,html}"
+      stage_fixed: true
+    - run: pnpm check
+      glob: "*.{ts,tsx}"
+    - run: pnpm fallow
+      glob: "*.{ts,tsx,js,jsx,mjs,cjs,json,jsonc}"

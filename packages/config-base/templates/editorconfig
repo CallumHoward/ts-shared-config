@@ -1,0 +1,16 @@
+# oxfmt reads .editorconfig (indent width, tabs-vs-spaces, end-of-line, …), so
+# this file is the single source of truth for whitespace — your editor and oxfmt
+# can't disagree. Copy to .editorconfig
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+trim_trailing_whitespace = false

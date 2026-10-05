@@ -1,0 +1,21 @@
+# Supply-chain + build baseline from @callumhoward/config-base.
+# pnpm has no `extends` for this file, so copy these keys into your own
+# pnpm-workspace.yaml once (re-copy to pick up updates).
+
+# Ignore versions published < 7 days ago, giving time to vet/yank releases.
+minimumReleaseAge: 10080
+# Block versions with weaker trust attestation than prior releases.
+trustPolicy: no-downgrade
+
+allowBuilds:
+  lefthook: true
+
+# stylelint-use-nesting and stylelint-value-no-unknown-custom-properties import
+# postcss without declaring it; pnpm's isolated layout needs it supplied.
+packageExtensions:
+  stylelint-use-nesting@*:
+    dependencies:
+      postcss: ^8.5.15
+  stylelint-value-no-unknown-custom-properties@*:
+    dependencies:
+      postcss: ^8.5.15
