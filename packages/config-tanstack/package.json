@@ -45,11 +45,12 @@
     "@callumhoward/config-utilities": "workspace:*",
     "@types/node": "^24.13.2",
     "@vitest/coverage-v8": "^5.0.0",
+    "oxfmt": "^0.58.0",
     "oxlint": "^1.79.0",
+    "oxlint-tsgolint": "^7.0.2001",
     "typescript": "^6.0.3",
     "vite": "^8.1.0",
-    "vitest": "^5.0.0",
-    "oxfmt": "^0.58.0"
+    "vitest": "^5.0.0"
   },
   "peerDependencies": {
     "oxlint": "^1.79.0",
