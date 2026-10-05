@@ -7,8 +7,8 @@
 
 `ci.yml` is a **thin caller** for the shared reusable workflow
 (`callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml`), so CI logic
-updates flow by bumping the `@ref` — you don't re-copy it. Pin to a release tag
-(`@v1`) for stability or track `@main`. Toggle tiers via inputs:
+updates flow by bumping the `@ref` — you don't re-copy it. The `@v1` tag follows
+the latest release; use `@main` only to try unreleased changes. Toggle tiers via inputs:
 
 | Input | Default | Use |
 | --- | --- | --- |

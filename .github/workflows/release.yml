@@ -32,6 +32,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - uses: changesets/action@v1
+        id: changesets
         with:
           version: pnpm version-packages
           publish: pnpm release
@@ -41,3 +42,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: "true"
+
+      # The tag the CI template and README point consumers at; it follows the
+      # latest release so workflow fixes reach them without re-copying.
+      - name: Move the v1 tag
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          git tag -f v1
+          git push -f origin v1
