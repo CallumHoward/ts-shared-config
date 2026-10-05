@@ -55,8 +55,15 @@ jobs:
           CURRENT: ${{ steps.versions.outputs.current }}
           LATEST: ${{ steps.versions.outputs.latest }}
         run: |
+          # A Corepack-hashed pin (pnpm@x+sha512.<hex>) keeps a hash: the registry's
+          # sha512 integrity, base64-decoded to hex, is what Corepack records.
+          suffix=""
+          if grep -q "\"packageManager\": \"pnpm@[^\"]*+sha512\." package.json; then
+            integrity=$(npm view "pnpm@${LATEST}" dist.integrity)
+            suffix="+sha512.$(node -p "Buffer.from(process.argv[1].replace('sha512-', ''), 'base64').toString('hex')" "$integrity")"
+          fi
           # Targeted replace so the rest of package.json formatting is untouched.
-          sed -i "s/\"packageManager\": \"pnpm@${CURRENT}[^\"]*\"/\"packageManager\": \"pnpm@${LATEST}\"/" package.json
+          sed -i "s/\"packageManager\": \"pnpm@${CURRENT}[^\"]*\"/\"packageManager\": \"pnpm@${LATEST}${suffix}\"/" package.json
 
       # pnpm 12 records the pinned pnpm version in pnpm-lock.yaml, so bumping only
       # package.json breaks `pnpm install --frozen-lockfile`. Install the current pnpm
