@@ -1,5 +1,17 @@
 # @wcmj/config-tailwind
 
+## 0.2.0
+
+### Patch Changes
+
+- facfad3: Remove settings and claims inherited from a private project: the `^@/` import ban, the `assertNoFailures` assertion option, `storybook-static` ignores, the `json` coverage reporter and stories coverage exclude, and Tailwind's `@screen`/`@responsive` stylelint allowances. Comments and docs now describe only what this repo does.
+- Updated dependencies [facfad3]
+- Updated dependencies [12085d0]
+- Updated dependencies [38417a5]
+- Updated dependencies [74be1c4]
+- Updated dependencies [6e1c687]
+  - @wcmj/config-base@0.2.0
+
 ## 0.1.3
 
 ### Patch Changes

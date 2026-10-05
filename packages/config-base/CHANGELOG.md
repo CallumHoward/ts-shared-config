@@ -1,5 +1,18 @@
 # @wcmj/config-base
 
+## 0.2.0
+
+### Minor Changes
+
+- 74be1c4: Make peer dependencies match what the presets use: `@vitest/coverage-v8` (the base config sets the v8 provider) and `@testing-library/dom` (required by React Testing Library) are now peers, `oxlint-tsgolint` needs `^7.0.2003` as oxlint requires, and `typescript` is capped below 6.1 to match typescript-eslint
+- 6e1c687: Slim the stylelint preset to stylelint-config-standard plus no `!important`, no unknown animations, and no id selectors. Drops the a11y, ordering, nesting, Baseline, logical-property and unknown-custom-property plugins and rules, the nesting-depth, forced-color-adjust and font/grid rules, the `knownCustomProperties` add-on, the `MESSAGES` export, and the postcss `packageExtensions` entries from the pnpm-workspace template.
+
+### Patch Changes
+
+- facfad3: Remove settings and claims inherited from a private project: the `^@/` import ban, the `assertNoFailures` assertion option, `storybook-static` ignores, the `json` coverage reporter and stories coverage exclude, and Tailwind's `@screen`/`@responsive` stylelint allowances. Comments and docs now describe only what this repo does.
+- 12085d0: Drop `noPropertyAccessFromIndexSignature` from the base tsconfig so index-signature properties (e.g. `process.env.CI`) can be read with dot notation
+- 38417a5: Drop `exactOptionalPropertyTypes` from the base tsconfig so an optional property accepts an explicit `undefined`
+
 ## 0.1.3
 
 ### Patch Changes

@@ -1,5 +1,20 @@
 # @wcmj/config-playwright
 
+## 0.2.0
+
+### Minor Changes
+
+- facfad3: Require the `*.spec` middle extension for files in `e2e/`, as the README already described
+
+### Patch Changes
+
+- Updated dependencies [facfad3]
+- Updated dependencies [12085d0]
+- Updated dependencies [38417a5]
+- Updated dependencies [74be1c4]
+- Updated dependencies [6e1c687]
+  - @wcmj/config-base@0.2.0
+
 ## 0.1.3
 
 ### Patch Changes
