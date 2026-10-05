@@ -1,5 +1,13 @@
 # @wcmj/config-playwright
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [6855583]
+- Updated dependencies [566c3d1]
+  - @wcmj/config-base@0.1.3
+
 ## 0.1.2
 
 ### Patch Changes
