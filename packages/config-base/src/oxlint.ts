@@ -127,26 +127,9 @@ export const base = {
     "unicorn/no-process-exit": "error",
     // vitest plugin is enabled globally; scope require-hook to the test override.
     "vitest/require-hook": "off",
-    "unicorn-x/prevent-abbreviations": [
-      "error",
-      {
-        // Word-level, so the whole {Component}Props convention passes without
-        // an allowList entry per component; allowList is checked per-word too,
-        // but case-sensitively, so `props` alone never covered `ButtonProps`.
-        // docs is a common domain term (Storybook docs, docsPath).
-        replacements: { docs: false, props: false, ref: false },
-        allowList: {
-          args: true,
-          dir: true,
-          env: true,
-          err: true,
-          fn: true,
-          opts: true,
-          outDir: true,
-          params: true,
-        },
-      },
-    ],
+    // Too noisy for idiomatic names (`ServerFn`, `ctx`, `req`); the recommended
+    // set enables it, so it needs an explicit off.
+    "unicorn-x/prevent-abbreviations": "off",
     // jsPlugin rules sit outside `categories`, so the eslint-comments
     // recommended set needs enabling explicitly. no-unlimited-disable is
     // covered by the native no-abusive-eslint-disable below, which also
