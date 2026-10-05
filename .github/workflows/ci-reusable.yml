@@ -1,4 +1,4 @@
-# Reusable CI for @callumhoward/config-* consumers.
+# Reusable CI for @wcmj/config-* consumers.
 # Call it from your own .github/workflows/ci.yml:
 #   jobs:
 #     ci:
@@ -55,7 +55,7 @@ jobs:
         if: ${{ inputs.check-pnpm-policy }}
         run: >-
           pipx run check-jsonschema
-          --schemafile node_modules/@callumhoward/config-base/schema/pnpm-workspace.json
+          --schemafile node_modules/@wcmj/config-base/schema/pnpm-workspace.json
           pnpm-workspace.yaml
 
       - name: Typecheck

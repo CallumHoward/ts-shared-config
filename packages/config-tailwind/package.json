@@ -1,6 +1,15 @@
 {
-  "name": "@callumhoward/config-tailwind",
+  "name": "@wcmj/config-tailwind",
   "version": "0.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CallumHoward/ts-shared-config.git",
+    "directory": "packages/config-tailwind"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "exports": {
     "./vite": {
@@ -18,12 +27,15 @@
     "./fallow": "./fallow.json",
     "./package.json": "./package.json"
   },
-  "files": ["dist", "fallow.json"],
+  "files": [
+    "dist",
+    "fallow.json"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@callumhoward/config-base": "workspace:*",
+    "@wcmj/config-base": "workspace:*",
     "@tailwindcss/vite": "^4.3.1"
   },
   "peerDependencies": {

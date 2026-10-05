@@ -1,4 +1,4 @@
-# Scheduled pnpm-bump PR template from @callumhoward/config-gha.
+# Scheduled pnpm-bump PR template from @wcmj/config-gha.
 # Copy to .github/workflows/update-pnpm.yml.
 #
 # Opens a PR to bump the pnpm version pinned in package.json's "packageManager"

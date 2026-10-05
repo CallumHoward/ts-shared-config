@@ -1,3 +1,3 @@
-import { defineViteConfig } from "@callumhoward/config-base/vite";
+import { defineViteConfig } from "@wcmj/config-base/vite";
 
 export default defineViteConfig();

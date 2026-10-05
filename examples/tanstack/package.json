@@ -14,11 +14,11 @@
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
-    "@callumhoward/config-base": "workspace:*",
-    "@callumhoward/config-react": "workspace:*",
-    "@callumhoward/config-tanstack": "workspace:*",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@wcmj/config-base": "workspace:*",
+    "@wcmj/config-react": "workspace:*",
+    "@wcmj/config-tanstack": "workspace:*",
     "oxfmt": "^0.58.0",
     "oxlint": "^1.79.0",
     "oxlint-tsgolint": "^7.0.2001",

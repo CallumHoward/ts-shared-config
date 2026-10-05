@@ -1,9 +1,20 @@
 {
-  "name": "@callumhoward/config-gha",
+  "name": "@wcmj/config-gha",
   "version": "0.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CallumHoward/ts-shared-config.git",
+    "directory": "packages/config-gha"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "exports": {
     "./package.json": "./package.json"
   },
-  "files": ["templates"]
+  "files": [
+    "templates"
+  ]
 }

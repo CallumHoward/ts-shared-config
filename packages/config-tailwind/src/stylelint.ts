@@ -1,4 +1,4 @@
-import type { StylelintAddon } from "@callumhoward/config-base/stylelint";
+import type { StylelintAddon } from "@wcmj/config-base/stylelint";
 
 const tailwindAtRules = [
   "theme",

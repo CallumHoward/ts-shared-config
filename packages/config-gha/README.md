@@ -1,4 +1,4 @@
-# @callumhoward/config-gha
+# @wcmj/config-gha
 
 GitHub Actions templates for
 [ts-shared-config](https://github.com/CallumHoward/ts-shared-config).

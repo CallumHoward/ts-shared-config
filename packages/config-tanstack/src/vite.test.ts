@@ -1,4 +1,4 @@
-import { defineViteConfig } from "@callumhoward/config-base/vite";
+import { defineViteConfig } from "@wcmj/config-base/vite";
 import { describe, expect, it } from "vitest";
 
 import { tanstackRouterVite } from "./vite.ts";

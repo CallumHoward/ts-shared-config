@@ -1,4 +1,4 @@
 {
-  "extends": ["@callumhoward/config-base/tsconfig", "@callumhoward/config-react/tsconfig"],
+  "extends": ["@wcmj/config-base/tsconfig", "@wcmj/config-react/tsconfig"],
   "include": ["**/*.ts", "**/*.tsx"]
 }

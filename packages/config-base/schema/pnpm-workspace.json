@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://callumhoward.dev/schema/pnpm-workspace.json",
   "title": "pnpm-workspace supply-chain policy",
-  "description": "Asserts the @callumhoward/config-base supply-chain baseline. Other keys (packages, allowBuilds, catalogs, …) are unconstrained.",
+  "description": "Asserts the @wcmj/config-base supply-chain baseline. Other keys (packages, allowBuilds, catalogs, …) are unconstrained.",
   "type": "object",
   "required": ["minimumReleaseAge", "trustPolicy"],
   "properties": {

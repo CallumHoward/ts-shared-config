@@ -1,4 +1,4 @@
-# `@callumhoward/config-*` — Design
+# `@wcmj/config-*` — Design
 
 A tiered, publishable set of shared configs extracted from
 [`tanstack-react-ts-starter`](https://github.com/CallumHoward/tanstack-react-ts-starter).
@@ -26,7 +26,7 @@ tooling for React, TanStack, Tailwind, Playwright, and GitHub Actions.
 | 2 | Sharing the non-importable files (`pnpm-workspace.yaml`, `lefthook.yml`, GHA) | **Static templates the consumer copies once** — _**⚠️ superseded; see "Static config: inheritance over versioning" below.**_ |
 | 3 | DOM/browser testing line | **Node** vitest env in base; `jsdom` + testing-library + jest-dom + vitest-axe live in the **React** add-on |
 | 4 | Term for non-base pieces | **add-on** |
-| 5 | Scope / naming | `@callumhoward/config-*` |
+| 5 | Scope / naming | `@wcmj/config-*` |
 | 6 | Dependency ownership | **Hybrid**: consumer-invoked CLIs are `peerDependencies`; imported plugins/presets ship as `dependencies` of the add-on packages |
 
 ### Defaults (correct in review if wrong)
@@ -88,7 +88,7 @@ the only place they'd fit).
 
 - **`lefthook`, GHA, and `fallow` are now live** (not copy-once):
   - lefthook ships `config-base/lefthook.yml`; consumers
-    `extends: [node_modules/@callumhoward/config-base/lefthook.yml]` (verified
+    `extends: [node_modules/@wcmj/config-base/lefthook.yml]` (verified
     standalone — jobs append, not replace).
   - fallow ships `config-base/fallow.json` (+ react/tailwind `fallow.json` for
     deps it can't see used: jsdom, tailwindcss); consumers `extends` the
@@ -107,12 +107,12 @@ the only place they'd fit).
 
 ```
 packages/
-  config-base/        @callumhoward/config-base
-  config-react/       @callumhoward/config-react
-  config-tanstack/    @callumhoward/config-tanstack
-  config-tailwind/    @callumhoward/config-tailwind
-  config-playwright/  @callumhoward/config-playwright
-  config-gha/         @callumhoward/config-gha
+  config-base/        @wcmj/config-base
+  config-react/       @wcmj/config-react
+  config-tanstack/    @wcmj/config-tanstack
+  config-tailwind/    @wcmj/config-tailwind
+  config-playwright/  @wcmj/config-playwright
+  config-gha/         @wcmj/config-gha
 ```
 
 | Package | Subpath exports | Bundled (`dependencies`) | Consumer-installed (`peerDependencies`) |
@@ -133,7 +133,7 @@ packages/
 ```jsonc
 // tsconfig.json — native extends array; order = precedence
 {
-  "extends": ["@callumhoward/config-base/tsconfig", "@callumhoward/config-react/tsconfig"],
+  "extends": ["@wcmj/config-base/tsconfig", "@wcmj/config-react/tsconfig"],
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": { "paths": { "#/*": ["./src/*"] } }
 }
@@ -142,18 +142,18 @@ packages/
 ```ts
 // oxlint.config.ts — the react preset layers its rules first, then the add-ons in
 // argument order (later wins); base is implicit
-import { defineOxlint } from "@callumhoward/config-react/oxlint";
-import { tanstackQuery, tanstackRouter } from "@callumhoward/config-tanstack/oxlint";
-import playwright from "@callumhoward/config-playwright/oxlint";
+import { defineOxlint } from "@wcmj/config-react/oxlint";
+import { tanstackQuery, tanstackRouter } from "@wcmj/config-tanstack/oxlint";
+import playwright from "@wcmj/config-playwright/oxlint";
 export default defineOxlint(tanstackRouter, tanstackQuery, playwright);
 ```
 
 ```ts
 // vite.config.ts — helper enforces canonical plugin order regardless of arg order;
 // the react preset turns the React Compiler on by default.
-import { defineViteConfig } from "@callumhoward/config-react/vite";
-import tanstack from "@callumhoward/config-tanstack/vite";
-import tailwind from "@callumhoward/config-tailwind/vite";
+import { defineViteConfig } from "@wcmj/config-react/vite";
+import tanstack from "@wcmj/config-tanstack/vite";
+import tailwind from "@wcmj/config-tailwind/vite";
 export default defineViteConfig({ addons: [tailwind, tanstack] });
 ```
 
@@ -166,11 +166,11 @@ versioning").
 
 ```yaml
 # lefthook.yml
-extends: [node_modules/@callumhoward/config-base/lefthook.yml]
+extends: [node_modules/@wcmj/config-base/lefthook.yml]
 ```
 ```jsonc
 // .fallowrc.json
-{ "extends": ["./node_modules/@callumhoward/config-base/fallow.json"] }
+{ "extends": ["./node_modules/@wcmj/config-base/fallow.json"] }
 ```
 
 **Merge semantics for the JS `define*` helpers:** `plugins`/`jsPlugins`
@@ -219,7 +219,7 @@ concatenate.
   test-file override + `testing-library/*` rules.
 - **vite**: `viteReact()` + `babel({ presets: [reactCompilerPreset()] })` →
   **React Compiler on by default** (opt-out flag); `test` env → `jsdom`,
-  `setupFiles: ["@callumhoward/config-react/vitest-setup"]`.
+  `setupFiles: ["@wcmj/config-react/vitest-setup"]`.
 - **tsconfig**: `jsx: react-jsx`, `lib [ES2022, DOM, DOM.Iterable]`,
   `types ["vite/client"]`.
 - ships **`vitest-setup`** (jest-dom matchers + vitest-axe).

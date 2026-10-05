@@ -1,5 +1,5 @@
 {
-  "name": "@callumhoward/config-utilities",
+  "name": "@wcmj/config-utilities",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -14,7 +14,7 @@
     "lint:fix": "oxlint --type-aware --report-unused-disable-directives-severity=error --fix"
   },
   "devDependencies": {
-    "@callumhoward/config-base": "workspace:*",
+    "@wcmj/config-base": "workspace:*",
     "@types/node": "^24.13.2",
     "oxlint": "^1.79.0",
     "oxlint-tsgolint": "^7.0.2001",

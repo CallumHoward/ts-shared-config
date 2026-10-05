@@ -2,8 +2,8 @@ import {
   bundledPlugins,
   E2E_FILES,
   type OxlintAddon,
-} from "@callumhoward/config-base/oxlint";
-import { rulesFromConfig } from "@callumhoward/config-base/rules-from-config";
+} from "@wcmj/config-base/oxlint";
+import { rulesFromConfig } from "@wcmj/config-base/rules-from-config";
 import playwrightPlugin from "eslint-plugin-playwright";
 
 const plugin = bundledPlugins(import.meta.url);

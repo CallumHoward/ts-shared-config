@@ -1,4 +1,4 @@
 {
-  "extends": "@callumhoward/config-base/tsconfig",
+  "extends": "@wcmj/config-base/tsconfig",
   "include": ["**/*.ts"]
 }

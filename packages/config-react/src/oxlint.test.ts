@@ -1,5 +1,5 @@
-import type { OxlintAddon } from "@callumhoward/config-base/oxlint";
-import { oxlintNativeRuleNames } from "@callumhoward/config-base/rules-from-config";
+import type { OxlintAddon } from "@wcmj/config-base/oxlint";
+import { oxlintNativeRuleNames } from "@wcmj/config-base/rules-from-config";
 import { describe, expect, it } from "vitest";
 
 import { defineOxlint } from "./oxlint.ts";

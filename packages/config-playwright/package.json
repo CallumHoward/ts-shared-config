@@ -1,6 +1,15 @@
 {
-  "name": "@callumhoward/config-playwright",
+  "name": "@wcmj/config-playwright",
   "version": "0.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CallumHoward/ts-shared-config.git",
+    "directory": "packages/config-playwright"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist"
   ],
@@ -28,11 +37,11 @@
     "prepare": "pnpm run build"
   },
   "dependencies": {
-    "@callumhoward/config-base": "workspace:*",
+    "@wcmj/config-base": "workspace:*",
     "eslint-plugin-playwright": "^2.10.4"
   },
   "devDependencies": {
-    "@callumhoward/config-utilities": "workspace:*",
+    "@wcmj/config-utilities": "workspace:*",
     "@playwright/test": "^1.61.1",
     "@types/node": "^24.13.2",
     "@vitest/coverage-v8": "^5.0.0",

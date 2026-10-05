@@ -14,15 +14,15 @@ importers:
 
   examples/playwright:
     devDependencies:
-      '@callumhoward/config-base':
-        specifier: workspace:*
-        version: link:../../packages/config-base
-      '@callumhoward/config-playwright':
-        specifier: workspace:*
-        version: link:../../packages/config-playwright
       '@playwright/test':
         specifier: ^1.60.0
         version: 1.61.1
+      '@wcmj/config-base':
+        specifier: workspace:*
+        version: link:../../packages/config-base
+      '@wcmj/config-playwright':
+        specifier: workspace:*
+        version: link:../../packages/config-playwright
       oxfmt:
         specifier: ^0.58.0
         version: 0.58.0
@@ -45,15 +45,6 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
     devDependencies:
-      '@callumhoward/config-base':
-        specifier: workspace:*
-        version: link:../../packages/config-base
-      '@callumhoward/config-react':
-        specifier: workspace:*
-        version: link:../../packages/config-react
-      '@callumhoward/config-tailwind':
-        specifier: workspace:*
-        version: link:../../packages/config-tailwind
       '@testing-library/jest-dom':
         specifier: ^6.9.1
         version: 6.9.1
@@ -69,6 +60,15 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.17)
+      '@wcmj/config-base':
+        specifier: workspace:*
+        version: link:../../packages/config-base
+      '@wcmj/config-react':
+        specifier: workspace:*
+        version: link:../../packages/config-react
+      '@wcmj/config-tailwind':
+        specifier: workspace:*
+        version: link:../../packages/config-tailwind
       fallow:
         specifier: ^2.89.0
         version: 2.102.0
@@ -112,21 +112,21 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
     devDependencies:
-      '@callumhoward/config-base':
-        specifier: workspace:*
-        version: link:../../packages/config-base
-      '@callumhoward/config-react':
-        specifier: workspace:*
-        version: link:../../packages/config-react
-      '@callumhoward/config-tanstack':
-        specifier: workspace:*
-        version: link:../../packages/config-tanstack
       '@types/react':
         specifier: ^19.2.17
         version: 19.2.17
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.17)
+      '@wcmj/config-base':
+        specifier: workspace:*
+        version: link:../../packages/config-base
+      '@wcmj/config-react':
+        specifier: workspace:*
+        version: link:../../packages/config-react
+      '@wcmj/config-tanstack':
+        specifier: workspace:*
+        version: link:../../packages/config-tanstack
       oxfmt:
         specifier: ^0.58.0
         version: 0.58.0
@@ -148,7 +148,7 @@ importers:
 
   examples/vanilla:
     devDependencies:
-      '@callumhoward/config-base':
+      '@wcmj/config-base':
         specifier: workspace:*
         version: link:../../packages/config-base
       fallow:
@@ -250,16 +250,13 @@ importers:
 
   packages/config-playwright:
     dependencies:
-      '@callumhoward/config-base':
+      '@wcmj/config-base':
         specifier: workspace:*
         version: link:../config-base
       eslint-plugin-playwright:
         specifier: ^2.10.4
         version: 2.10.4(eslint@10.5.0(jiti@2.7.0))
     devDependencies:
-      '@callumhoward/config-utilities':
-        specifier: workspace:*
-        version: link:../config-utilities
       '@playwright/test':
         specifier: ^1.61.1
         version: 1.61.1
@@ -269,6 +266,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^5.0.0
         version: 5.0.3(vitest@5.0.3)
+      '@wcmj/config-utilities':
+        specifier: workspace:*
+        version: link:../config-utilities
       oxlint:
         specifier: ^1.79.0
         version: 1.86.0(oxlint-tsgolint@7.0.2003)
@@ -287,12 +287,12 @@ importers:
 
   packages/config-react:
     dependencies:
-      '@callumhoward/config-base':
-        specifier: workspace:*
-        version: link:../config-base
       '@vitejs/plugin-react':
         specifier: ^6.1.1
         version: 6.1.1(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.7)(rolldown@1.1.2)(vite@8.1.0(@types/node@24.13.2)(jiti@2.7.0)))(babel-plugin-react-compiler@1.0.0)(oxc-transform-react@0.145.0)(vite@8.1.0(@types/node@24.13.2)(jiti@2.7.0))
+      '@wcmj/config-base':
+        specifier: workspace:*
+        version: link:../config-base
       eslint-plugin-react-hooks:
         specifier: ^7.1.1
         version: 7.1.1(eslint@10.5.0(jiti@2.7.0))
@@ -351,12 +351,12 @@ importers:
 
   packages/config-tailwind:
     dependencies:
-      '@callumhoward/config-base':
-        specifier: workspace:*
-        version: link:../config-base
       '@tailwindcss/vite':
         specifier: ^4.3.1
         version: 4.3.1(vite@8.1.0(@types/node@24.13.2)(jiti@2.7.0))
+      '@wcmj/config-base':
+        specifier: workspace:*
+        version: link:../config-base
       tailwindcss:
         specifier: ^4.3.1
         version: 4.3.1
@@ -382,9 +382,6 @@ importers:
 
   packages/config-tanstack:
     dependencies:
-      '@callumhoward/config-base':
-        specifier: workspace:*
-        version: link:../config-base
       '@tanstack/devtools-vite':
         specifier: ^0.8.5
         version: 0.8.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(vite@8.1.0(@types/node@24.13.2)(jiti@2.7.0))
@@ -403,19 +400,22 @@ importers:
       '@tanstack/router-plugin':
         specifier: ^1.168.40
         version: 1.168.42(@tanstack/react-router@1.170.16(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(rolldown@1.1.2)(vite@8.1.0(@types/node@24.13.2)(jiti@2.7.0))
+      '@wcmj/config-base':
+        specifier: workspace:*
+        version: link:../config-base
       nitro:
         specifier: 3.0.260610-beta
         version: 3.0.260610-beta(chokidar@5.0.0)(jiti@2.7.0)(lru-cache@11.5.1)(vite@8.1.0(@types/node@24.13.2)(jiti@2.7.0))
     devDependencies:
-      '@callumhoward/config-utilities':
-        specifier: workspace:*
-        version: link:../config-utilities
       '@types/node':
         specifier: ^24.13.2
         version: 24.13.2
       '@vitest/coverage-v8':
         specifier: ^5.0.0
         version: 5.0.3(vitest@5.0.3)
+      '@wcmj/config-utilities':
+        specifier: workspace:*
+        version: link:../config-utilities
       oxfmt:
         specifier: ^0.58.0
         version: 0.58.0
@@ -437,12 +437,12 @@ importers:
 
   packages/config-utilities:
     devDependencies:
-      '@callumhoward/config-base':
-        specifier: workspace:*
-        version: link:../config-base
       '@types/node':
         specifier: ^24.13.2
         version: 24.13.2
+      '@wcmj/config-base':
+        specifier: workspace:*
+        version: link:../config-base
       oxlint:
         specifier: ^1.79.0
         version: 1.86.0(oxlint-tsgolint@7.0.2003)

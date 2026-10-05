@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import {
   defineViteConfig as defineBaseViteConfig,
   type ViteAddon,
-} from "@callumhoward/config-base/vite";
+} from "@wcmj/config-base/vite";
 import viteReact from "@vitejs/plugin-react";
 import type { PluginOption } from "vite";
 

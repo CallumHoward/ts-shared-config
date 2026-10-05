@@ -1,4 +1,4 @@
-import { defineViteConfig } from "@callumhoward/config-react/vite";
-import tailwind from "@callumhoward/config-tailwind/vite";
+import { defineViteConfig } from "@wcmj/config-react/vite";
+import tailwind from "@wcmj/config-tailwind/vite";
 
 export default defineViteConfig({ addons: [tailwind] });

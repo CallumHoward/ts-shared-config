@@ -1,5 +1,5 @@
 {
-  "extends": "@callumhoward/config-base/tsconfig",
+  "extends": "@wcmj/config-base/tsconfig",
   "compilerOptions": { "types": ["node"] },
   "include": ["src"]
 }
