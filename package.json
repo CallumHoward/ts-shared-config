@@ -15,12 +15,14 @@
     "format:check": "pnpm -r --filter \"./examples/*\" run format:check",
     "fallow": "pnpm -r --filter \"./examples/*\" run fallow",
     "test": "pnpm -r --filter \"./examples/*\" run test",
-    "validate": "pnpm build && pnpm check:packages && pnpm lint:packages && pnpm test:packages && pnpm check && pnpm lint && pnpm lint:css && pnpm format:check && pnpm fallow && pnpm test",
+    "validate": "pnpm check:schemas && pnpm build && pnpm check:packages && pnpm lint:packages && pnpm test:packages && pnpm check && pnpm lint && pnpm lint:css && pnpm format:check && pnpm fallow && pnpm test",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm build && changeset publish"
+    "release": "pnpm build && changeset publish",
+    "check:schemas": "sill check"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.0"
+    "@changesets/cli": "^2.27.0",
+    "@wcmj/sill": "0.1.1"
   }
 }
