@@ -1,7 +1,8 @@
 # Opens a "Version packages" PR from pending changesets; merging it publishes
 # the config-* packages to npm with provenance (the starter's pnpm
 # `trustPolicy: no-downgrade` needs attested releases).
-# Requires an NPM_TOKEN repository secret with publish rights to @wcmj.
+# Publishes over OIDC: each package lists this repo and workflow file as a
+# trusted publisher on npmjs.com, so no npm token is stored.
 name: Release
 
 on:
@@ -23,8 +24,11 @@ jobs:
 
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: "22"
-          registry-url: https://registry.npmjs.org
+          node-version: "24"
+
+      # Trusted publishing needs npm 11.5.1 or newer.
+      - name: Update npm
+        run: npm install -g npm@^11.5.1
 
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
 
@@ -40,7 +44,6 @@ jobs:
           commit: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: "true"
 
       # The tag the CI template and README point consumers at; it follows the
