@@ -1,5 +1,12 @@
 # @wcmj/config-playwright
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [eb655eb]
+  - @wcmj/config-base@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes

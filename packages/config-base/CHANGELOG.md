@@ -1,5 +1,11 @@
 # @wcmj/config-base
 
+## 0.1.2
+
+### Patch Changes
+
+- eb655eb: Only turn off typescript-eslint rules the installed plugin has, so older 8.x releases no longer fail oxlint config parsing
+
 ## 0.1.1
 
 ### Patch Changes
