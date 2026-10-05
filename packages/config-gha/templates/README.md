@@ -7,7 +7,7 @@
 
 `ci.yml` is a **thin caller** for the shared reusable workflow
 (`callumhoward/ts-shared-config/.github/workflows/ci-reusable.yml`), so CI logic
-you don't re-copy CI logic. The template pins the commit a release tag points at,
+doesn't need to be re-copied. The template pins the commit a release tag points at,
 with a `# v1` comment that Dependabot or Renovate keep current; the `v1` tag itself
 is mutable, so don't reference it directly. Use `@main` only to try unreleased
 changes. Toggle tiers via inputs:
