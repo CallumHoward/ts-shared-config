@@ -1,5 +1,21 @@
 # @wcmj/config-react
 
+## 0.2.0
+
+### Minor Changes
+
+- 74be1c4: Make peer dependencies match what the presets use: `@vitest/coverage-v8` (the base config sets the v8 provider) and `@testing-library/dom` (required by React Testing Library) are now peers, `oxlint-tsgolint` needs `^7.0.2003` as oxlint requires, and `typescript` is capped below 6.1 to match typescript-eslint
+
+### Patch Changes
+
+- facfad3: Remove settings and claims inherited from a private project: the `^@/` import ban, the `assertNoFailures` assertion option, `storybook-static` ignores, the `json` coverage reporter and stories coverage exclude, and Tailwind's `@screen`/`@responsive` stylelint allowances. Comments and docs now describe only what this repo does.
+- Updated dependencies [facfad3]
+- Updated dependencies [12085d0]
+- Updated dependencies [38417a5]
+- Updated dependencies [74be1c4]
+- Updated dependencies [6e1c687]
+  - @wcmj/config-base@0.2.0
+
 ## 0.1.3
 
 ### Patch Changes
