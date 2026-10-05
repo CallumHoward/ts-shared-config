@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "_comment": "@wcmj/config-base — vanilla-TS base. Extend via \"extends\". The react add-on layers jsx + DOM lib + vite/client types.",
+  "_comment": "@wcmj/config-base — vanilla-TS base. Extend via \"extends\". The react add-on layers jsx + DOM lib.",
   "compilerOptions": {
     "target": "ES2025",
     "module": "ESNext",

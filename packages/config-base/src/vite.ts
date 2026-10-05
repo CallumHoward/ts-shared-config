@@ -14,8 +14,7 @@ type TestConfig = ViteUserConfig["test"];
 /**
  * Nearest ancestor containing pnpm-workspace.yaml, or cwd outside a workspace.
  * Used as the lcov reporter's projectRoot so per-package runs emit
- * repo-relative SF: paths — the root test:cov can then concatenate the package
- * reports for diff-cover without rewriting them.
+ * repo-relative SF: paths, which diff-cover can match against the git diff.
  */
 function workspaceRoot(): string {
   let directory = process.cwd();
@@ -29,10 +28,7 @@ function workspaceRoot(): string {
 
 /** The slice of a vite/vitest config an add-on package contributes. */
 export interface ViteAddon {
-  /**
-   * Plugins this add-on contributes (mode-aware: `test` mode skips dev
-   * plugins).
-   */
+  /** Plugins this add-on contributes; receives the vite config env. */
   plugins?: (env: ConfigEnv) => PluginOption[];
   /**
    * Vitest `test` config this add-on contributes (shallow-merged over the
@@ -59,8 +55,8 @@ export const baseTest = {
   environment: "node",
   // CI installs fresh every job, so writing the cache there is pure cost.
   fsModuleCache: !process.env["GITHUB_ACTIONS"],
-  // Per package: parallel runs sharing the root cache race to wipe it when the
-  // lockfile hash changes (ENOTEMPTY). Resolved against each project root.
+  // Per package, resolved against each project root, so parallel package runs
+  // never share one cache directory.
   fsModuleCachePath: "node_modules/.vitest-cache",
   reporters: process.env["GITHUB_ACTIONS"]
     ? ["default", "github-actions"]
@@ -71,17 +67,11 @@ export const baseTest = {
   typecheck: { enabled: true },
   coverage: {
     provider: "v8",
-    // "json" emits the Istanbul map fallow's CRAP scoring needs; lcov can't
-    // feed it. The merged HTML report is why no per-package "html" here.
-    reporter: [["lcov", { projectRoot: workspaceRoot() }], "json"],
+    reporter: [["lcov", { projectRoot: workspaceRoot() }]],
     include: ["src/**/*.{ts,tsx}"],
-    // Stories are documentation fixtures and generated files (e.g. a router's
-    // route tree) are not authored code, so neither counts toward coverage.
-    exclude: [
-      "src/**/*.{test,test-d,spec}.{ts,tsx}",
-      "src/**/*.stories.{ts,tsx}",
-      "src/**/*.gen.{ts,tsx}",
-    ],
+    // Generated files (e.g. a router's route tree) are not authored code, so
+    // they don't count toward coverage.
+    exclude: ["src/**/*.{test,test-d,spec}.{ts,tsx}", "src/**/*.gen.{ts,tsx}"],
   },
 } satisfies TestConfig;
 

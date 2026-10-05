@@ -22,4 +22,11 @@ export default defineOxlint(playwright);
 The oxlint add-on scopes the plugin's recommended rules to `e2e/**`, which the
 base vitest rules and `vitest` itself exclude.
 
-`definePlaywright` accepts `{ baseURL, testDir, devCommand, ciCommand }`.
+`definePlaywright` accepts `{ baseURL, testDir, devCommand, ciCommand }`. The
+defaults are `http://localhost:3000`, `./e2e`, `pnpm dev` (local) and `pnpm serve`
+(CI, expected to serve a prebuilt app), so the consuming project must define
+those scripts or pass its own commands. The base vitest and lint scoping assumes
+suites live in `e2e/`; a different `testDir` is not excluded from them.
+
+The add-on also requires suites to use the `*.spec` middle extension
+(`home.spec.ts`); helper modules without a middle extension are fine.

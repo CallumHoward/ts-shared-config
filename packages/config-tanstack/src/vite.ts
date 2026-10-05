@@ -7,8 +7,8 @@ import type { ViteAddon } from "@wcmj/config-base/vite";
 
 /**
  * TanStack Start dev/build plugins (devtools, nitro, start). Skipped under
- * vitest (`mode === "test"`), matching the starter. Ordered after tailwind and
- * before the react plugins.
+ * vitest (`mode === "test"`). Ordered after tailwind and before the react
+ * plugins.
  */
 export const tanstackVite: ViteAddon = {
   order: 5,

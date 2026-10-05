@@ -1,7 +1,4 @@
-import {
-  defineOxlint,
-  E2E_FILES,
-} from "@wcmj/config-base/oxlint";
+import { defineOxlint, E2E_FILES } from "@wcmj/config-base/oxlint";
 import { lintFixturesByFile } from "@wcmj/config-utilities/oxlint-fixtures";
 import { beforeAll, describe, expect, it } from "vitest";
 
@@ -53,6 +50,8 @@ describe("playwright add-on under oxlint", () => {
     codes = lintFixturesByFile(defineOxlint(playwright), {
       "e2e/focused.spec.ts": focusedSuite,
       "e2e/valid.spec.ts": validSuite,
+      "e2e/home.test.ts": validSuite,
+      "e2e/helpers.ts": "export const base = 1;\n",
     });
   });
 
@@ -64,5 +63,15 @@ describe("playwright add-on under oxlint", () => {
 
   it("should report nothing for a valid playwright suite", () => {
     expect(codes["e2e/valid.spec.ts"]).toEqual([]);
+  });
+
+  it("should require the spec middle extension on e2e suites", () => {
+    expect(codes["e2e/home.test.ts"]).toContain(
+      "check-file/filename-naming-convention",
+    );
+  });
+
+  it("should allow plain helper modules in e2e", () => {
+    expect(codes["e2e/helpers.ts"]).toEqual([]);
   });
 });

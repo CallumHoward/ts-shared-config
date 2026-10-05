@@ -5,5 +5,4 @@ export const buildOutputDirectories = [
   "coverage",
   "dist",
   "out",
-  "storybook-static",
 ];

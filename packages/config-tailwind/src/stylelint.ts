@@ -11,8 +11,6 @@ const tailwindAtRules = [
   "reference",
   "config",
   "tailwind",
-  "screen",
-  "responsive",
 ];
 
 /**

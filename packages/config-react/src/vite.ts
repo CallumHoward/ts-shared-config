@@ -24,14 +24,14 @@ export interface ReactViteOptions {
 export const reactTest = {
   environment: "jsdom",
   setupFiles: [fileURLToPath(new URL("vitest-setup.js", import.meta.url))],
-  // Externalized, jest-dom extends a chai instance that isn't the one the test
-  // module graph asserts against, which silently breaks `toThrow`.
+  // Inlined so jest-dom extends the same expect instance the tests assert
+  // against, not a separate externalized copy.
   server: { deps: { inline: ["@testing-library/jest-dom"] } },
 };
 
 /**
  * The react plugins, React Compiler on by default. Exported for builders that
- * own their vite config (storybook) rather than composing through the preset.
+ * own their vite config rather than composing through the preset.
  */
 export function reactPlugins(options: ReactViteOptions = {}): PluginOption[] {
   const { reactCompiler = true } = options;

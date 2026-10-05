@@ -23,7 +23,9 @@ interface Manifest {
 // descends into node_modules.
 const manifests: Manifest[] = globSync(
   ["packages/*/package.json", "examples/*/package.json"],
-  { cwd: repoRoot },
+  {
+    cwd: repoRoot,
+  },
 ).map((relative) => {
   const file = path.join(repoRoot, relative);
   return {
@@ -76,10 +78,10 @@ function lcovOptions(factory: ConfigFactory): { projectRoot: string } {
 }
 
 describe("coverage reporters", () => {
-  it("includes the json (Istanbul) reporter fallow's CRAP scoring reads", () => {
-    // Without coverage-final.json the root merge has nothing to feed fallow,
-    // and CRAP silently degrades to static estimates.
-    expect(reporters(defineViteConfig)).toContain("json");
+  it("emits lcov only, which diff-cover reads", () => {
+    expect(
+      reporters(defineViteConfig).map((entry) => [entry].flat()[0]),
+    ).toEqual(["lcov"]);
   });
 });
 
@@ -111,7 +113,6 @@ describe("module cache", () => {
   });
 
   it("persists transformed modules across local reruns", async () => {
-    // Saves the workspace suite ~16% on a warm rerun.
     expect(await fsModuleCacheWhen()).toBe(true);
   });
 
@@ -147,9 +148,7 @@ describe("workspace test tooling", () => {
   it("is declared by every package whose scripts invoke vitest", () => {
     // An undeclared vitest resolves via the root manifest, so the gap only
     // shows when a stale .bin shim runs a second copy alongside it.
-    expect(
-      undeclared(packagesRunning(/\bvitest\b/), "vitest"),
-    ).toEqual([]);
+    expect(undeclared(packagesRunning(/\bvitest\b/), "vitest")).toEqual([]);
   });
 
   it("resolves one vitest install, the one jest-dom extends", () => {
@@ -169,8 +168,8 @@ describe("workspace test tooling", () => {
   });
 
   it("pairs every --coverage run with the v8 provider", () => {
-    // Same phantom resolution: a package that cannot load the provider
-    // contributes no coverage-final.json to the root merge.
+    // Same phantom resolution: a package that cannot load the provider cannot
+    // produce coverage at all.
     expect(
       undeclared(
         packagesRunning(/vitest\b[^&|]*--coverage/),

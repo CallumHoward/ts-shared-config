@@ -12,6 +12,7 @@ the latest release; use `@main` only to try unreleased changes. Toggle tiers via
 
 | Input | Default | Use |
 | --- | --- | --- |
+| `node-version-file` | `.nvmrc` | file the Node version is read from |
 | `run-css` | `true` | `pnpm lint:css` (stylelint / Tailwind) |
 | `run-build` | `false` | `pnpm build` (app tiers — react / tanstack) |
 | `run-e2e` | `false` | install Chromium + `pnpm test:e2e` (config-playwright) |
@@ -20,5 +21,7 @@ the latest release; use `@main` only to try unreleased changes. Toggle tiers via
 
 The reusable workflow expects these package.json scripts (config-base's
 defaults): `check`, `lint:ci`, `lint:css`, `format:check`, `fallow`, `test:cov`,
-and — per tier — `build` and `test:e2e`. `update-pnpm.yml` is a standalone
-scheduled workflow (copy-once).
+and — per tier — `build` and `test:e2e`. `test:cov` must write
+`coverage/lcov.info` at the repo root (config-base's vitest preset emits lcov
+with repo-relative paths), which the diff-coverage step reads. `update-pnpm.yml`
+is a standalone scheduled workflow (copy-once).

@@ -6,7 +6,6 @@ import type { OxlintConfig, OxlintOverride } from "oxlint";
 
 import { buildOutputDirectories } from "./build-output.ts";
 import { concat, merge } from "./merge.ts";
-// Shared across preset packages via the ./rules-from-config export entry.
 import { rulesFromConfig } from "./rules-from-config.ts";
 
 type PluginName = NonNullable<OxlintConfig["plugins"]>[number];
@@ -43,11 +42,11 @@ export interface OxlintAddon {
   env?: Environment;
 }
 
-/** Middle extensions any package's src files may carry (foo.test.ts). */
-const typeInformationRules = [
-  "no-generated-empty-object-type",
-  "no-unsafe-enum-assignment",
-];
+/**
+ * typescript-eslint rules oxlint can only run as a jsPlugin, where they have no
+ * type information. They are turned off rather than run blind.
+ */
+const typeInformationRules = ["no-unsafe-enum-assignment"];
 
 // Turns off `prefix/name` for each name the plugin's rules map has.
 export function offWhenPresent(
@@ -56,10 +55,13 @@ export function offWhenPresent(
   pluginRules: Record<string, unknown>,
 ): Record<string, "off"> {
   return Object.fromEntries(
-    names.filter((name) => name in pluginRules).map((name) => [`${prefix}/${name}`, "off"]),
+    names
+      .filter((name) => name in pluginRules)
+      .map((name) => [`${prefix}/${name}`, "off"]),
   );
 }
 
+/** Middle extensions any package's src files may carry (foo.test.ts). */
 export const SRC_MIDDLE_EXTENSIONS = ["test", "test-d", "d"];
 
 /** Middle extensions for package-root files (oxlint.config.ts). */
@@ -121,26 +123,22 @@ export const base = {
       jsPrefix: "unicorn-x",
       config: "recommended",
     }),
-    "unicorn/filename-case": ["error", { case: "kebabCase" }],
     "unicorn/no-null": "off",
-    // Libraries shouldn't kill the host process; CLI entry points opt out inline.
-    "unicorn/no-process-exit": "error",
     // vitest plugin is enabled globally; scope require-hook to the test override.
     "vitest/require-hook": "off",
-    // Too noisy for idiomatic names (`ServerFn`, `ctx`, `req`); the recommended
+    // Too noisy for idiomatic short names (`ctx`, `req`, `fn`); the recommended
     // set enables it, so it needs an explicit off.
     "unicorn-x/prevent-abbreviations": "off",
-    // jsPlugin rules sit outside `categories`, so the eslint-comments
-    // recommended set needs enabling explicitly. no-unlimited-disable is
-    // covered by the native no-abusive-eslint-disable below, which also
-    // understands `oxlint-disable` comments.
+    // jsPlugin rules sit outside `categories`, so the eslint-comments rules
+    // chosen here need enabling explicitly. no-unlimited-disable is covered by
+    // the native no-abusive-eslint-disable, which also understands
+    // `oxlint-disable` comments.
     "eslint-comments/require-description": "error",
     // allowWholeFile keeps top-of-file disables legal (scoped ones still pair).
     "eslint-comments/disable-enable-pair": ["error", { allowWholeFile: true }],
     "eslint-comments/no-aggregating-enable": "error",
     "eslint-comments/no-duplicate-disable": "error",
     "eslint-comments/no-unused-enable": "error",
-    "unicorn/no-abusive-eslint-disable": "error",
     // typescript-eslint's strictTypeChecked set. Oxlint ports nearly all of it
     // natively (type-aware rules via tsgolint); the rest run as a jsPlugin.
     ...rulesFromConfig({
@@ -153,18 +151,23 @@ export const base = {
     // Need type information, which the jsPlugin runtime cannot provide. Only
     // those the installed plugin has: oxlint rejects a rule it can't find, even
     // when off, and typescript-eslint adds rules between minors.
-    ...offWhenPresent("ts-eslint-js", typeInformationRules, typescriptEslint.rules),
+    ...offWhenPresent(
+      "ts-eslint-js",
+      typeInformationRules,
+      typescriptEslint.rules,
+    ),
     // The native core rule already covers it.
     "ts-eslint-js/no-unused-vars": "off",
     "typescript/switch-exhaustiveness-check": "error",
     "typescript/no-unnecessary-condition": "warn",
-    // `onClick={() => setOpen(true)}` is idiomatic; braces would add noise.
+    // A concise arrow like `() => setOpen(true)` is idiomatic; braces add noise.
     "typescript/no-confusing-void-expression": [
       "error",
       { ignoreArrowShorthand: true },
     ],
-    // Nullish and numbers allowed: CSS module lookups are `string | undefined`
-    // under noUncheckedIndexedAccess, and numbers stringify predictably.
+    // Nullish and numbers allowed: index lookups (process.env, CSS module
+    // classes) are `string | undefined` under noUncheckedIndexedAccess, and
+    // numbers stringify predictably.
     "typescript/restrict-template-expressions": [
       "error",
       {
@@ -183,18 +186,6 @@ export const base = {
     "prefer-rest-params": "error",
     "prefer-spread": "error",
     "import/no-cycle": "error",
-    "no-restricted-imports": [
-      "error",
-      {
-        patterns: [
-          {
-            regex: "^@/",
-            message:
-              "Use the '#/' alias for src imports (the '@/' alias was removed).",
-          },
-        ],
-      },
-    ],
     "check-file/filename-blocklist": [
       "error",
       {
@@ -226,11 +217,7 @@ export const base = {
           { fn: "it", withinDescribe: "it" },
         ],
         "vitest/no-identical-title": "error",
-        // assertNoFailures wraps expect.soft for soft-assertion audit helpers
-        "vitest/expect-expect": [
-          "error",
-          { assertFunctionNames: ["expect", "assertNoFailures"] },
-        ],
+        "vitest/expect-expect": "error",
         "vitest/no-commented-out-tests": "warn",
         "vitest/no-duplicate-hooks": "error",
         "vitest/prefer-hooks-in-order": "error",

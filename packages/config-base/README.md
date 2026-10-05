@@ -47,12 +47,15 @@ Lint runs as `oxlint --type-aware`, which shells out to `oxlint-tsgolint`
 ## What the presets enforce
 
 - **oxlint**: typescript-eslint's `strict-type-checked` set (native where
-  ported, bundled jsPlugin otherwise), unicorn `recommended`, eslint-comments
-  hygiene, `import/no-cycle`, kebab-case filenames with co-located tests, JSDoc
-  tag rules, and a vitest override for test files.
+  ported, bundled jsPlugin otherwise; `no-unsafe-enum-assignment` is off since
+  it needs type information, `no-unnecessary-condition` is a warning, and
+  `restrict-template-expressions` allows nullish and numbers), unicorn
+  `recommended` without `prevent-abbreviations`, eslint-comments hygiene,
+  `import/no-cycle`, kebab-case filenames with co-located tests, JSDoc tag
+  rules, and a vitest override for test files.
 - **stylelint**: `stylelint-config-standard` plus no `!important`, no unknown
   animations, and no id selectors. Disables must carry a description and be
   needed.
-- **vitest**: node env, v8 coverage (lcov + json), fs module cache locally, mocks
+- **vitest**: node env, v8 coverage (lcov), fs module cache locally, mocks
   restored after each test. Needs vitest 5.
 - **lefthook**: check-only hooks except `oxfmt`, which writes and re-stages.
