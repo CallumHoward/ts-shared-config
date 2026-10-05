@@ -1,4 +1,5 @@
 import {
+  AT_ALIAS_PATTERN,
   bundledPlugins,
   defineOxlint as defineBaseOxlint,
   E2E_FILES,
@@ -39,6 +40,8 @@ const react: OxlintAddon = {
     "no-restricted-imports": [
       "error",
       {
+        // Replaces the base rule wholesale, so it restates the alias ban.
+        patterns: [AT_ALIAS_PATTERN],
         paths: [
           {
             name: "react",

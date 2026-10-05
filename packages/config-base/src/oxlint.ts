@@ -61,6 +61,12 @@ export function offWhenPresent(
   );
 }
 
+/** `no-restricted-imports` pattern for the unsupported `@/` src alias. */
+export const AT_ALIAS_PATTERN = {
+  regex: "^@/",
+  message: "Use the '#/' alias for src imports.",
+};
+
 /** Middle extensions any package's src files may carry (foo.test.ts). */
 export const SRC_MIDDLE_EXTENSIONS = ["test", "test-d", "d"];
 
@@ -162,12 +168,7 @@ export const base = {
     "no-restricted-imports": [
       "error",
       {
-        patterns: [
-          {
-            regex: "^@/",
-            message: "Use the '#/' alias for src imports.",
-          },
-        ],
+        patterns: [AT_ALIAS_PATTERN],
       },
     ],
     "typescript/switch-exhaustiveness-check": "error",

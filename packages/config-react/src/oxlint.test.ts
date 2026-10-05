@@ -62,6 +62,16 @@ describe("react preset conventions", () => {
     expect(config.env?.["browser"]).toBe(true);
   });
 
+  it("keeps the @/ alias ban and the default React import ban", () => {
+    expect(config.rules?.["no-restricted-imports"]).toEqual([
+      "error",
+      {
+        patterns: [expect.objectContaining({ regex: "^@/" })],
+        paths: [expect.objectContaining({ name: "react" })],
+      },
+    ]);
+  });
+
   it("requires hook modules to carry the hook's camelCase name", () => {
     const hooks = config.overrides?.find((override) =>
       override.files.includes("**/use[A-Z]*.{ts,tsx}"),
