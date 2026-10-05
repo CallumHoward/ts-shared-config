@@ -1,5 +1,6 @@
 import path from "node:path";
 
+import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -9,10 +10,11 @@ import {
   E2E_FILES,
   filenameNamingConvention,
   type OxlintAddon,
-  offWhenPresent,
+  offWhenTypeAware,
   ROOT_MIDDLE_EXTENSIONS,
   SRC_MIDDLE_EXTENSIONS,
 } from "./oxlint.ts";
+import { routeRules } from "./rules-from-config.ts";
 
 describe("filenameNamingConvention", () => {
   it("builds the shared patterns by default", () => {
@@ -37,33 +39,24 @@ describe("filenameNamingConvention", () => {
   });
 });
 
-describe("offWhenPresent", () => {
-  it("turns off the rules the plugin has", () => {
-    const rules = {
-      "no-unsafe-enum-assignment": {},
-      "no-generated-empty-object-type": {},
-    };
-    expect(
-      offWhenPresent(
-        "ts-eslint-js",
-        ["no-unsafe-enum-assignment", "no-generated-empty-object-type"],
-        rules,
-      ),
-    ).toEqual({
-      "ts-eslint-js/no-unsafe-enum-assignment": "off",
-      "ts-eslint-js/no-generated-empty-object-type": "off",
-    });
-  });
+describe("offWhenTypeAware", () => {
+  const pluginRules = {
+    "needs-types": { meta: { docs: { requiresTypeChecking: true } } },
+    "syntax-only": { meta: { docs: { requiresTypeChecking: false } } },
+    bare: {},
+  };
 
-  it("omits a rule an older plugin release lacks", () => {
-    const rules = { "no-generated-empty-object-type": {} };
-    expect(
-      offWhenPresent(
-        "ts-eslint-js",
-        ["no-unsafe-enum-assignment", "no-generated-empty-object-type"],
-        rules,
-      ),
-    ).toEqual({ "ts-eslint-js/no-generated-empty-object-type": "off" });
+  it("turns off only the prefixed rules that require type information", () => {
+    const rules = {
+      "js/needs-types": "error",
+      "js/syntax-only": "error",
+      "js/bare": "error",
+      "js/unknown": "error",
+      "native/needs-types": "error",
+    };
+    expect(offWhenTypeAware("js", rules, pluginRules)).toEqual({
+      "js/needs-types": "off",
+    });
   });
 });
 
@@ -103,13 +96,6 @@ describe("strictTypeChecked routing", () => {
     expect(rules["ts-eslint-js/no-unsafe-enum-assignment"]).toBe("off");
   });
 
-  it("runs the ported rule natively with no jsPlugin twin", () => {
-    expect(rules["typescript/no-generated-empty-object-type"]).toBe("error");
-    expect(rules).not.toHaveProperty(
-      "ts-eslint-js/no-generated-empty-object-type",
-    );
-  });
-
   it("keeps the preset's own severity for no-unnecessary-condition", () => {
     expect(rules["typescript/no-unnecessary-condition"]).toBe("warn");
   });
@@ -119,6 +105,33 @@ describe("strictTypeChecked routing", () => {
       "error",
       { ignoreArrowShorthand: true },
     ]);
+  });
+});
+
+// With an oxlint that ports none of the rules natively, every type-aware rule
+// lands in the jsPlugin, where it would crash for lack of type information.
+describe("type-aware jsPlugin rules", () => {
+  it("are all off when no rule is native", () => {
+    const routed = routeRules(
+      typescriptEslint.configs["flat/strict-type-checked"],
+      {
+        sourcePrefix: "@typescript-eslint",
+        nativePrefix: "typescript",
+        jsPrefix: "ts-eslint-js",
+        nativeRuleNames: new Set(),
+      },
+    );
+    const merged = {
+      ...routed,
+      ...offWhenTypeAware("ts-eslint-js", routed, typescriptEslint.rules),
+    };
+    const typeAware = Object.keys(routed).filter(
+      (key) =>
+        typescriptEslint.rules[key.slice("ts-eslint-js/".length)]?.meta?.docs
+          ?.requiresTypeChecking === true,
+    );
+    expect(typeAware.length).toBeGreaterThan(0);
+    for (const key of typeAware) expect(merged[key]).toBe("off");
   });
 });
 
