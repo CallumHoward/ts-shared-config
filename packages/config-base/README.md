@@ -50,26 +50,24 @@ Lint runs as `oxlint --type-aware`, which shells out to `oxlint-tsgolint`
   ported, bundled jsPlugin otherwise), unicorn `recommended`, eslint-comments
   hygiene, `import/no-cycle`, kebab-case filenames with co-located tests, JSDoc
   tag rules, and a vitest override for test files.
-- **stylelint**: `stylelint-config-standard` plus a11y, logical properties,
-  nesting depth and ordering, forced-colors-safe borders, `:focus-visible`,
-  em media queries, and Baseline browser support. Design-token policy is not
-  included.
+- **stylelint**: `stylelint-config-standard` plus a small set of rules: no
+  `!important`, max nesting depth of two, no unknown animations, no id
+  selectors, and no `forced-color-adjust` or `font`/`grid` shorthands. Disables
+  must carry a description and be needed. A `knownCustomProperties` add-on
+  checks that every `var(--…)` resolves.
 - **vitest**: node env, v8 coverage (lcov + json), fs module cache locally, mocks
   restored after each test. Needs vitest 5.
 - **lefthook**: check-only hooks except `oxfmt`, which writes and re-stages.
 
 ## Consumer notes
 
-- The `stylelint-use-nesting` and `stylelint-value-no-unknown-custom-properties`
-  plugins import `postcss` without declaring it, which pnpm's isolated layout
-  surfaces as "Cannot find package 'postcss'". Until upstream declares it, add
-  to the consumer's `pnpm-workspace.yaml`:
+- The `stylelint-value-no-unknown-custom-properties` plugin (used by the
+  `knownCustomProperties` add-on) imports `postcss` without declaring it, which
+  pnpm's isolated layout surfaces as "Cannot find package 'postcss'". Until
+  upstream declares it, add to the consumer's `pnpm-workspace.yaml`:
 
   ```yaml
   packageExtensions:
-    stylelint-use-nesting@*:
-      dependencies:
-        postcss: ^8.5.15
     stylelint-value-no-unknown-custom-properties@*:
       dependencies:
         postcss: ^8.5.15

@@ -60,15 +60,11 @@
   },
   "dependencies": {
     "@csstools/stylelint-formatter-github": "^2.0.0",
-    "@double-great/stylelint-a11y": "^3.5.0",
     "@eslint-community/eslint-plugin-eslint-comments": "^4.7.2",
     "@typescript-eslint/eslint-plugin": "^8.70.0",
     "eslint-plugin-check-file": "^3.3.1",
     "eslint-plugin-unicorn": "^64.0.0",
     "stylelint-config-standard": "^40.0.0",
-    "stylelint-order": "^8.1.1",
-    "stylelint-plugin-use-baseline": "^1.4.4",
-    "stylelint-use-nesting": "^6.0.2",
     "stylelint-value-no-unknown-custom-properties": "^6.1.1"
   },
   "devDependencies": {
