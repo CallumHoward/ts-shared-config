@@ -96,6 +96,15 @@ describe("strictTypeChecked routing", () => {
     expect(rules["ts-eslint-js/no-unsafe-enum-assignment"]).toBe("off");
   });
 
+  it("bans the @/ import alias", () => {
+    expect(rules["no-restricted-imports"]).toEqual([
+      "error",
+      {
+        patterns: [expect.objectContaining({ regex: "^@/" })],
+      },
+    ]);
+  });
+
   it("keeps the preset's own severity for no-unnecessary-condition", () => {
     expect(rules["typescript/no-unnecessary-condition"]).toBe("warn");
   });
