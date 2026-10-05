@@ -1,5 +1,18 @@
 # @wcmj/config-tanstack
 
+## 0.3.0
+
+### Minor Changes
+
+- 97121d5: Ban `@/` imports in oxlint so projects using the `#/` subpath alias get a clear lint message.
+
+### Patch Changes
+
+- 82d64e8: Turn off every type-aware typescript-eslint rule that oxlint routes to the jsPlugin, fixing a lint crash on oxlint versions that don't port `no-generated-empty-object-type` natively. `offWhenPresent` is replaced by `offWhenTypeAware`.
+- Updated dependencies [97121d5]
+- Updated dependencies [82d64e8]
+  - @wcmj/config-base@0.3.0
+
 ## 0.2.0
 
 ### Patch Changes
