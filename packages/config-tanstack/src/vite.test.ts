@@ -1,15 +1,15 @@
 import { defineViteConfig } from "@wcmj/config-base/vite";
 import { describe, expect, it } from "vitest";
 
-import { tanstackRouterVite } from "./vite.ts";
+import { tanstackRouterVite, tanstackVite } from "./vite.ts";
 
 const environment = { command: "build", mode: "production" } as const;
 
 /** Flatten a resolved plugin list to its names. */
 function pluginNames(plugins: unknown): string[] {
-  return (plugins as Array<{ name?: string } | Array<{ name?: string }>>)
+  return (plugins as Array<{ name?: string } | null | Array<{ name?: string }>>)
     .flat()
-    .map((plugin) => plugin.name ?? "");
+    .map((plugin) => plugin?.name ?? "");
 }
 
 describe("tanstackRouterVite", () => {
@@ -34,5 +34,25 @@ describe("tanstackRouterVite", () => {
     expect(names.indexOf("jsx")).toBeGreaterThan(
       names.findIndex((name) => name.startsWith("tanstack-router")),
     );
+  });
+});
+
+describe("tanstackVite", () => {
+  it("should contribute the Start plugins outside tests", () => {
+    const config = defineViteConfig({ addons: [tanstackVite] })(environment);
+    expect(pluginNames(config.plugins)).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining("tanstack-react-start"),
+        expect.stringContaining("nitro:"),
+      ]),
+    );
+  });
+
+  it("should add nothing under vitest", () => {
+    const config = defineViteConfig({ addons: [tanstackVite] })({
+      command: "serve",
+      mode: "test",
+    });
+    expect(pluginNames(config.plugins ?? [])).toEqual([]);
   });
 });

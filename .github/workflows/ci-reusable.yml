@@ -32,6 +32,9 @@ on:
         type: number
         default: 80
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -54,7 +57,7 @@ jobs:
       - name: pnpm-workspace policy
         if: ${{ inputs.check-pnpm-policy }}
         run: >-
-          pipx run check-jsonschema
+          pipx run check-jsonschema==0.38.2
           --schemafile node_modules/@wcmj/config-base/schema/pnpm-workspace.json
           pnpm-workspace.yaml
 
@@ -79,7 +82,7 @@ jobs:
 
       - name: Diff coverage
         run: |
-          pipx run diff-cover coverage/lcov.info \
+          pipx run diff-cover==10.6.0 coverage/lcov.info \
             --compare-branch origin/${{ github.base_ref || 'main' }} \
             --fail-under ${{ inputs.diff-coverage-threshold }}
 
