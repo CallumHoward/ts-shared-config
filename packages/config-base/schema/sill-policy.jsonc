@@ -1,0 +1,5 @@
+{
+  "$schema": "https://raw.githubusercontent.com/CallumHoward/sill/main/sill.config.schema.json",
+  "catalog": false,
+  "schemas": [{ "files": "pnpm-workspace.yaml", "schema": "./pnpm-workspace.json" }],
+}

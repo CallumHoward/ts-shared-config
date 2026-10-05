@@ -21,3 +21,4 @@ jobs:
       run-e2e: false # set true with config-playwright
       check-peers: false # set true on pnpm 11+ to fail on unmet peers
       check-dedupe: false # set true to fail on avoidable duplicate resolutions
+      check-schemas: false # set true to validate config files with sill

@@ -32,8 +32,12 @@ on:
         description: Run `pnpm dedupe --check` so avoidable duplicate resolutions fail CI.
         type: boolean
         default: false
+      check-schemas:
+        description: Run `sill check` so config files that reference a schema, or match SchemaStore, are validated.
+        type: boolean
+        default: false
       check-pnpm-policy:
-        description: Validate pnpm-workspace.yaml against the config-base supply-chain schema.
+        description: Validate pnpm-workspace.yaml against the config-base supply-chain schema (needs @wcmj/sill).
         type: boolean
         default: true
       diff-coverage-threshold:
@@ -74,9 +78,13 @@ jobs:
       - name: pnpm-workspace policy
         if: ${{ inputs.check-pnpm-policy }}
         run: >-
-          pipx run check-jsonschema==0.38.2
-          --schemafile node_modules/@wcmj/config-base/schema/pnpm-workspace.json
+          pnpm exec sill check
+          --config node_modules/@wcmj/config-base/schema/sill-policy.jsonc
           pnpm-workspace.yaml
+
+      - name: Config schemas
+        if: ${{ inputs.check-schemas }}
+        run: pnpm exec sill check
 
       - name: Typecheck
         run: pnpm check
