@@ -6,3 +6,5 @@ packages:
 # set this to true (see config-base's pnpm-workspace template).
 allowBuilds:
   lefthook: false
+minimumReleaseAgeExclude:
+  - "@wcmj/*"

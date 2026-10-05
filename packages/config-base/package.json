@@ -45,7 +45,8 @@
     "./package.json": "./package.json",
     "./lefthook.yml": "./lefthook.yml",
     "./schema/pnpm-workspace": "./schema/pnpm-workspace.json",
-    "./schema/pnpm-workspace.json": "./schema/pnpm-workspace.json"
+    "./schema/pnpm-workspace.json": "./schema/pnpm-workspace.json",
+    "./schema/sill-policy": "./schema/sill-policy.jsonc"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -69,6 +70,7 @@
   "devDependencies": {
     "@types/node": "^24.13.2",
     "@vitest/coverage-v8": "^5.0.0",
+    "@wcmj/sill": "0.1.0",
     "oxfmt": "^0.58.0",
     "oxlint": "^1.79.0",
     "stylelint": "^17.14.0",
@@ -78,6 +80,7 @@
   },
   "peerDependencies": {
     "@vitest/coverage-v8": "^5.0.0",
+    "@wcmj/sill": "^0.1.0",
     "fallow": "^2.89.0 || ^3.0.0",
     "lefthook": "^2.1.9",
     "oxfmt": ">=0.58.0 <1.0.0",

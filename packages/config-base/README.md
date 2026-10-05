@@ -36,7 +36,8 @@ extends: [node_modules/@wcmj/config-base/lefthook.yml]
 
 `schema/pnpm-workspace.json` asserts the supply-chain baseline
 (`minimumReleaseAge`, `trustPolicy`) — validate your `pnpm-workspace.yaml` in CI
-with `check-jsonschema`. Copy-once editor files (`.editorconfig`, `.vscode/*`,
+with `sill check --config node_modules/@wcmj/config-base/schema/sill-policy.jsonc
+pnpm-workspace.yaml` (`@wcmj/sill` is a peer dependency). Copy-once editor files (`.editorconfig`, `.vscode/*`,
 `.nvmrc`, plus a `pnpm-workspace.yaml` starting point) live in
 [`templates/`](./templates). See the
 [root README](https://github.com/CallumHoward/ts-shared-config) for full usage.

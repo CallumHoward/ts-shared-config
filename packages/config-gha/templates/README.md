@@ -20,7 +20,8 @@ changes. Toggle tiers via inputs:
 | `run-e2e` | `false` | install Chromium + `pnpm test:e2e` (config-playwright) |
 | `check-peers` | `false` | `pnpm peers check` (pnpm 11+) so unmet peers fail CI |
 | `check-dedupe` | `false` | `pnpm dedupe --check` so avoidable duplicate resolutions fail CI |
-| `check-pnpm-policy` | `true` | validate `pnpm-workspace.yaml` against config-base's supply-chain schema |
+| `check-schemas` | `false` | `sill check` over every config file (needs `@wcmj/sill`) |
+| `check-pnpm-policy` | `true` | validate `pnpm-workspace.yaml` against config-base's supply-chain schema with `sill` (needs `@wcmj/sill`) |
 | `diff-coverage-threshold` | `80` | min % coverage on changed lines |
 
 The reusable workflow expects these package.json scripts (config-base's
